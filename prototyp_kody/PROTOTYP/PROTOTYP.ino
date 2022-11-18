@@ -31,21 +31,8 @@ void setup() {
   serwomechanizm.attach(servo);
   serwomechanizm.write(pozycjaServo);
 }
-
-void loop() {
-  odczytanaWartosc= analogRead(foto);
-  analogWrite(3, 0);
-  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial())
-  {
-    if ((rfid.uid.uidByte[0] == UID[0] && 
-        rfid.uid.uidByte[1] == UID[1] &&
-        rfid.uid.uidByte[2] == UID[2] &&
-        rfid.uid.uidByte[3] == UID[3])||(rfid.uid.uidByte[0] == UID2[0] && 
-        rfid.uid.uidByte[1] == UID2[1] &&
-        rfid.uid.uidByte[2] == UID2[2] &&
-        rfid.uid.uidByte[3] == UID2[3]))
-    {
-      Serial.println("Poprawny");
+void wejscie(){
+  Serial.println("Poprawny");
       stan = true;
       lcd.clear();
       if (rfid.uid.uidByte[0] == UID[0] && 
@@ -69,9 +56,10 @@ void loop() {
       delay(3000);
         }
       czas = millis() + czas_trwania;
-    } else
-    {
-      Serial.println("Niepoprawny");
+}
+
+void zlakarta(){
+  Serial.println("Niepoprawny");
       stan = false;
       lcd.clear();
       lcd.print("Nieautoryzowane");
@@ -81,6 +69,25 @@ void loop() {
       delay(2000);
       lcd.clear();
       lcd.print("Zamkniete");
+}
+
+void loop() {
+  odczytanaWartosc= analogRead(foto);
+  analogWrite(3, 0);
+  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial())
+  {
+    if ((rfid.uid.uidByte[0] == UID[0] && 
+        rfid.uid.uidByte[1] == UID[1] &&
+        rfid.uid.uidByte[2] == UID[2] &&
+        rfid.uid.uidByte[3] == UID[3])||(rfid.uid.uidByte[0] == UID2[0] && 
+        rfid.uid.uidByte[1] == UID2[1] &&
+        rfid.uid.uidByte[2] == UID2[2] &&
+        rfid.uid.uidByte[3] == UID2[3]))
+    {
+      wejscie();
+    } else
+    {
+      zlakarta();
     }
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
