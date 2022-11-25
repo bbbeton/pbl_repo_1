@@ -4,15 +4,17 @@ void setup() {
   fullScreen();
   fill(0);
   background(0, 149, 255);
-  firstSite();
   time=0;
 }
 void draw() {
-while(time<3000){
-time=millis();
-  }
- 
+ if(millis()<3000)
+ {
+ firstSite();
+ }
+ else
+ {
   OpenDoorSite();
+ }
   
 }
 
@@ -21,6 +23,7 @@ void firstSite()
 myFont = loadFont("Bauhaus93-120.vlw");
 fill(230);
 textFont(myFont);
+
 text("Home Sweet Home", 60, 1100);
 }
 
@@ -40,8 +43,8 @@ triangle(468, 1170, 468, 1330, 609,1250);
   fill(230);
   textSize(70);
 text("Click here to open a door", 150, 1500);
-//clikn here to open a door
 if (mousePressed) {
+  //clik here to open a door
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       fill(9, 74, 171);
       strokeWeight(5);
@@ -49,5 +52,27 @@ if (mousePressed) {
       rect(380, 1100,300,300,30);
       triangle(468, 1170, 468, 1330, 609,1250);
     } 
+    //clicking options
+    if ( mouseX < width/4 && mouseY > 2000) {
+      noStroke();
+      fill(150);
+      rect(0, 2000,width/4,400);
+    } 
+    if ( mouseX > width/4 && mouseX < width/2 && mouseY > 2000) {
+      noStroke();
+      fill(150);
+      rect(width/4, 2000, width/4, 400);
+    } 
+    if ( mouseX > width/2 && mouseX < 3*width/4 && mouseY > 2000) {
+      noStroke();
+      fill(150);
+      rect(width/2, 2000, width/4, 400);
+    } 
+    if ( mouseX > 3*width/4 && mouseY > 2000) {
+      noStroke();
+      fill(150);
+      rect(3*width/4, 2000,width/4,400);
+    } 
   }
+  
 }
