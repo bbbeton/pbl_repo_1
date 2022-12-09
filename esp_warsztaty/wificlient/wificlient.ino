@@ -3,7 +3,7 @@
     It sends a "hello" message, and then prints received data.
 */
 
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 
 #ifndef STASSID
 #define STASSID "PBL_WiFi"
