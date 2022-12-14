@@ -1,5 +1,4 @@
 PFont myFont;
-int time;
 PImage drzwi_zamkniete_photo;
 PImage drzwi_otwarte_photo; 
 PImage ustawienia_przed_photo;
@@ -10,12 +9,26 @@ PImage newMember_przed_photo;
 PImage newMember_po_photo;
 PImage historia_przed_photo;
 PImage historia_po_photo;
+
 String logo = "Home Sweet Home";
+float time;
+//animation step
+float a;
+float b;
+float c;
+int y;
+int k;
+//bacground
+float xb=0;
+float yb=149;
+float zb=255;
+String message= "Home Sweet Home";
+Letter[] letters;
 void setup() {
   orientation(PORTRAIT); 
   fullScreen();
   fill(0);
-  background(0, 149, 255);
+  background(xb, yb, zb);
   drzwi_zamkniete_photo = loadImage("drzwi_zamkniete.png");
   drzwi_otwarte_photo = loadImage("drzwi_otwarte.png");
   ustawienia_przed_photo = loadImage("ustawienia_przed.png");
@@ -26,12 +39,54 @@ void setup() {
   newMember_po_photo = loadImage("newMember_po.png");
   historia_przed_photo = loadImage("log_wejsc_przed.png");
   historia_po_photo = loadImage("log_wejsc_po.png");
-  time=0;
+  myFont = loadFont("Bauhaus93-120.vlw"); //czcionka
+  textFont(myFont);
+  // Create the array the same size as the String
+  letters = new Letter[message.length()];
+  // Initialize Letters at the correct x location
+  int x = 60;
+  for (int i = 0; i < message.length(); i++) {
+   letters[i] = new Letter(x,1100,message.charAt(i));
+   x += textWidth(message.charAt(i));
+  }
 }
 void draw() {
- if(millis()<3000)
+ if(millis()<6000)
  {
- firstSite();
+    time=5000/30;
+  background(xb, yb, zb);
+ for (int i = 0; i < letters.length + 15; i++) {
+    // Display all letters
+a=15.333333333;
+b=5.4;
+c=1.666666666;
+    if(millis()>time)
+    {
+      if(i>=15)
+      {
+        y=15;
+         for(k=i-15; k<15;k++)
+      {
+         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+         y--;
+      }
+      for(k=i-15;k>=0;k--)
+      letters[k].display(230,230,230);
+      }
+      else
+      {
+        y=1;
+      for(k=i; k>=0;k--)
+      {
+         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+         y++;
+      }
+      }
+      
+    }
+    time+=5000/30;
+  }
+ 
  }
  else
  {
@@ -40,15 +95,26 @@ void draw() {
   
 }
 
-void firstSite()
-{
-myFont = loadFont("Bauhaus93-120.vlw");
-fill(230);
-textFont(myFont);
-text(logo, 60, 1100);
-}
+class Letter {
+  char letter;
+  // The object knows its original "home" location
+  float homex,homey;
+  // As well as its current location
+  float x,y;
 
-void OpenDoorSite()
+  Letter (float x_, float y_, char letter_) {
+    homex = x = x_;
+    homey = y = y_;
+    letter = letter_;
+  }
+
+  // Display the letter
+  void display(float a,float b,float c) {
+      fill(a,b,c);
+    text(letter,x,y);
+  }
+}
+ void OpenDoorSite()
 {
 background(0, 149, 255);
 noStroke();
@@ -81,19 +147,6 @@ if (mousePressed) {
       image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
     } 
   int opcje = clickingOptions();
-  switch(opcje){
-    case '1': 
-      pageHistoriaWejsc();
-      break;
-//    case '2': 
-//      break;
-//    case '3': 
-//      break;
-//    case '4': 
-//      break;
-    default:
-      break;
-  }
 }
 }
 int clickingOptions()
@@ -134,8 +187,4 @@ int clickingOptions()
     } 
     else
     return 0;
-}
-
-void pageHistoriaWejsc(){
-  
 }
