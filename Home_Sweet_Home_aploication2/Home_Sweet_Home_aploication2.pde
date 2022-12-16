@@ -91,6 +91,24 @@ c=1.666666666;
  else
  {
   OpenDoorSite();
+  int opcje = clickingOptions();
+  // różne strony
+  switch(opcje){
+  case 1: 
+    SiteHistoriaWejsc();
+    break;
+  case 2:
+    SiteKamerka();
+    break;
+  case 3:
+    SiteNewMember();
+    break;
+  case 4:
+    SiteUstawienia();
+    break;
+  default:
+    break;
+}
  }
   
 }
@@ -119,12 +137,8 @@ class Letter {
 background(0, 149, 255);
 noStroke();
 fill(230,230,230);
-//rect(0,2000,1100,400);
 image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
-image(ustawienia_przed_photo, 3*width/4, 2050, width/4, width/4);
-image(kamera_przed_photo, width/4, 2050, width/4, width/4);
-image(newMember_przed_photo, 2*width/4, 2050, width/4, width/4);
-image(historia_przed_photo, 0, 2050, width/4, width/4);
+dolnyPasek();
 
 fill(0, 149, 255);
 strokeWeight(5);
@@ -136,7 +150,7 @@ fill(230);
 textSize(70);
 text("Click here to open the door", 100, 1500);
 
-if (mousePressed) {
+  if (mousePressed) {
   //clik here to open a door
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       fill(9, 74, 171);
@@ -146,45 +160,77 @@ if (mousePressed) {
       triangle(468, 1170, 468, 1330, 609,1250);
       image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
     } 
-  int opcje = clickingOptions();
+    int opcje = clickingOptions();
+  }
 }
-}
+
 int clickingOptions()
 {
   //clicking options
     // historia wejść
-    if ( mouseX < width/4 && mouseY > 2050) {
+    if ( mouseX < width/5 && mouseY > 2050) {
       
       noStroke();
       fill(150);
-      //rect(0, 2000,width/4,400);
-      image(historia_po_photo, 0, 2050, width/4, width/4);
+      image(historia_po_photo, 0, 2050, width/5, width/5);
       return 1;
     } 
     // kamera
-    if ( mouseX > width/4 && mouseX < width/2 && mouseY > 2050) {
+    if ( mouseX > width/5 && mouseX < 2*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      //rect(width/4, 2000, width/4, 400);
-      image(kamera_po_photo, width/4, 2050, width/4, width/4);
+      image(kamera_po_photo, width/5, 2050, width/5, width/5);
       return 2;
     } 
     // adding a new member
-    if ( mouseX > width/2 && mouseX < 3*width/4 && mouseY > 2050) {
+    if ( mouseX > 3*width/5 && mouseX < 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      //rect(width/2, 2000, width/4, 400);
-      image(newMember_po_photo, 2*width/4, 2050, width/4, width/4);
+      image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
       return 3;
     } 
     // ustawienia
-    if ( mouseX > 3*width/4 && mouseY > 2050) {
+    if ( mouseX > 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      //rect(3*width/4, 2000,width/4,400);
-      image(ustawienia_po_photo, 3*width/4, 2050, width/4, width/4 );
+      image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
       return 4;
     } 
     else
     return 0;
+}
+void dolnyPasek(){
+  rect(0, 2050, 0, 0, 0);
+  image(historia_przed_photo, 0, 2050, width/5, width/5);
+  image(kamera_przed_photo, width/5, 2050, width/5, width/5);
+  image(newMember_przed_photo, 3*width/5, 2050, width/5, width/5);
+  image(ustawienia_przed_photo, 4*width/5, 2050, width/5, width/5);
+}
+// historia wejsc strona 1
+void SiteHistoriaWejsc(){
+  background(0, 149, 255);
+  dolnyPasek();
+  int opcje = clickingOptions();
+  
+}
+// kamerka strona 2
+void SiteKamerka(){
+  background(0, 149, 255);
+  dolnyPasek();
+  int opcje = clickingOptions();
+  
+}
+// nowy czlonek strona 3
+void SiteNewMember(){
+  background(0, 149, 255);
+  dolnyPasek();
+  int opcje = clickingOptions();
+  
+}
+// ustawienia strona 4
+void SiteUstawienia(){
+  background(0, 149, 255);
+  dolnyPasek();
+  int opcje = clickingOptions();
+  
 }
