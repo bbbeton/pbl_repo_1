@@ -23,6 +23,8 @@ float xb=0;
 float yb=149;
 float zb=255;
 String message= "Home Sweet Home";
+int opcje = 3;
+int wifi;
 Letter[] letters;
 void setup() {
   orientation(PORTRAIT); 
@@ -51,47 +53,46 @@ void setup() {
   }
 }
 void draw() {
- if(millis()<6000)
- {
-    time=5000/30;
-  background(xb, yb, zb);
- for (int i = 0; i < letters.length + 15; i++) {
-    // Display all letters
-a=15.333333333;
-b=5.4;
-c=1.666666666;
-    if(millis()>time)
-    {
-      if(i>=15)
-      {
-        y=15;
-         for(k=i-15; k<15;k++)
-      {
-         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
-         y--;
-      }
-      for(k=i-15;k>=0;k--)
-      letters[k].display(230,230,230);
-      }
-      else
-      {
-        y=1;
-      for(k=i; k>=0;k--)
-      {
-         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
-         y++;
-      }
-      }
-      
-    }
-    time+=5000/30;
-  }
- 
- }
- else
- {
-  OpenDoorSite();
-  int opcje = clickingOptions();
+// ZAKOMENTOWANE DO CZASU PRACY NAD RESZTĄ KODU
+// -------------------------------------
+// if(millis()<6000)
+// {
+//    time=5000/30;
+//  background(xb, yb, zb);
+// for (int i = 0; i < letters.length + 15; i++) {
+//    // Display all letters
+//a=15.333333333;
+//b=5.4;
+//c=1.666666666;
+//    if(millis()>time)
+//    {
+//      if(i>=15)
+//      {
+//        y=15;
+//         for(k=i-15; k<15;k++)
+//      {
+//         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+//         y--;
+//      }
+//      for(k=i-15;k>=0;k--)
+//      letters[k].display(230,230,230);
+//      }
+//      else
+//      {
+//        y=1;
+//      for(k=i; k>=0;k--)
+//      {
+//         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+//         y++;
+//      }
+//      }
+//      
+//    }
+//    time+=5000/30;
+//  }
+//  }
+//  else
+//  {
   // różne strony
   switch(opcje){
   case 1: 
@@ -101,18 +102,30 @@ c=1.666666666;
     SiteKamerka();
     break;
   case 3:
-    SiteNewMember();
+    wifi = OpenDoorSite();
+    if(wifi == 22){
+      fill(9, 74, 171);
+      strokeWeight(5);
+      stroke(230);
+      rect(380, 1100,300,300,30);
+      triangle(468, 1170, 468, 1330, 609,1250);
+      image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
+    } else if (wifi == 21){
+      OpenDoorSite();
+    }
     break;
   case 4:
+    wifi = SiteNewMember();
+    break;
+  case 5:
     SiteUstawienia();
     break;
   default:
     break;
-}
- }
-  
-}
-
+  }
+  opcje = clickingOptions();
+  } 
+//} DO ODKOMENTOWANIA GDY BEDZIEMY WLACZAC OTWIERANIE APKI
 class Letter {
   char letter;
   // The object knows its original "home" location
@@ -132,7 +145,7 @@ class Letter {
     text(letter,x,y);
   }
 }
- void OpenDoorSite()
+ int OpenDoorSite()
 {
 background(0, 149, 255);
 noStroke();
@@ -153,15 +166,12 @@ text("Click here to open the door", 100, 1500);
   if (mousePressed) {
   //clik here to open a door
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
-      fill(9, 74, 171);
-      strokeWeight(5);
-      stroke(230);
-      rect(380, 1100,300,300,30);
-      triangle(468, 1170, 468, 1330, 609,1250);
-      image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
+
+      return 22;
     } 
-    int opcje = clickingOptions();
-  }
+  } 
+  // tu dodać ifa zamykajacego obrazek drzwi gdy drzwi zostana zamkniete albo uplynie czas
+  return 21;
 }
 
 int clickingOptions()
@@ -182,19 +192,25 @@ int clickingOptions()
       image(kamera_po_photo, width/5, 2050, width/5, width/5);
       return 2;
     } 
+    // strona główna
+    if ( mouseX > 2*width/5 && mouseX < 3*width/5 && mouseY > 2050) {
+      noStroke();
+      fill(150);
+      return 3;
+    }
     // adding a new member
     if ( mouseX > 3*width/5 && mouseX < 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
       image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
-      return 3;
+      return 4;
     } 
     // ustawienia
     if ( mouseX > 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
       image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
-      return 4;
+      return 5;
     } 
     else
     return 0;
@@ -210,27 +226,77 @@ void dolnyPasek(){
 void SiteHistoriaWejsc(){
   background(0, 149, 255);
   dolnyPasek();
-  int opcje = clickingOptions();
-  
+  fill(255);
+  rect(width/7, width/7, 5*width/7, 5*height/7, 15);
+  // wstawiamy liste kto wchodzil 
+
 }
 // kamerka strona 2
 void SiteKamerka(){
   background(0, 149, 255);
   dolnyPasek();
-  int opcje = clickingOptions();
+  // tu trzeba dodać link do strony z widokiem z kamerki
   
 }
-// nowy czlonek strona 3
-void SiteNewMember(){
+// nowy czlonek strona 4
+int SiteNewMember(){
   background(0, 149, 255);
   dolnyPasek();
-  int opcje = clickingOptions();
+  fill(230);
+  textSize(70);
+  rect(width/3, height/3, width/3, height/7, 15);
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("Add", (width/2), (height/3 + 100 ));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("a new", (width/2), (height/3 + 200));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("member", (width/2), (height/3 + 300));
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("Hi!", (width/2), (height/3 + 500));
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("Do you want to let someone have access to your gate?", (width/2), (height/3 + 500));
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("First you have to pair their device to the aplication!", (width/2), (height/3 + 500));
+  
+  if (mousePressed) {
+  //clik here to add a new member
+    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > height/3 && mouseY < (height/3 + height/7) ) {
+      SiteAddingNewMember();
+      return 22;
+    } 
+  return 23;
   
 }
-// ustawienia strona 4
+}
+// ustawienia strona 5
 void SiteUstawienia(){
   background(0, 149, 255);
   dolnyPasek();
-  int opcje = clickingOptions();
+
+  
+}
+void SiteAddingNewMember {
+  background(0, 149, 255);
+  // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
+  fill(255);
+  text("Provide the number of the new user", (50), (100));
+ if (mousePressed) {
+  // STRZALECZKA GO BACK
+    if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50 {
+      SiteNewMember();
+      return 22;
+    } 
   
 }
