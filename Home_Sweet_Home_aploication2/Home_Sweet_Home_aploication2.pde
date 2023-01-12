@@ -9,6 +9,9 @@ PImage newMember_przed_photo;
 PImage newMember_po_photo;
 PImage historia_przed_photo;
 PImage historia_po_photo;
+PImage ikona_drzwi_po;
+PImage ikona_drzwi;
+PImage ikona_kamera;
 
 String logo = "Home Sweet Home";
 float time;
@@ -18,6 +21,7 @@ float b;
 float c;
 int y;
 int k;
+int otwarcie_drzwi;
 // colors
 // background colors
 float xb=0;
@@ -52,6 +56,9 @@ void setup() {
   newMember_po_photo = loadImage("newMember_po.png");
   historia_przed_photo = loadImage("log_wejsc_przed.png");
   historia_po_photo = loadImage("log_wejsc_po.png");
+  ikona_drzwi_po = loadImage("ikona_drzwi_po.png");
+  ikona_drzwi = loadImage("ikona_drzwi.png");
+  ikona_kamera = loadImage("ikona_kamera.png");
   myFont = loadFont("Bauhaus93-120.vlw"); //czcionka
   textFont(myFont);
   // Create the array the same size as the String
@@ -113,28 +120,29 @@ void draw() {
     SiteKamerka();
     break;
   case 3:
-    wifi = OpenDoorSite();
-    if(wifi == 22){
+    OpenDoorSite();
+    if(otwarcie_drzwi == 22){
       fill(9, 74, 171);
       strokeWeight(5);
       stroke(230);
       rect(380, 1100,300,300,30);
       triangle(468, 1170, 468, 1330, 609,1250);
       image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
-    } else if (wifi == 21){
-      OpenDoorSite();
     }
     break;
   case 4:
-    wifi = SiteNewMember();
+    SiteNewMember();
     break;
   case 5:
     SiteUstawienia();
     break;
+  case 6:
+  SiteAddingNewMember();
+  break;
   default:
     break;
   }
-  opcje = clickingOptions();
+
   } 
 //} DO ODKOMENTOWANIA GDY BEDZIEMY WLACZAC OTWIERANIE APKI
 class Letter {
@@ -156,78 +164,91 @@ class Letter {
     text(letter,x,y);
   }
 }
- int OpenDoorSite()
+ void OpenDoorSite()
 {
 background(xb, yb, zb);
 noStroke();
+dolnyPasek();
+image(ikona_drzwi_po, 2*width/5, 2050, width/5, width/5);
 fill(xc, yc, zc);
 image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
-dolnyPasek();
 
 fill(0, 149, 255);
 strokeWeight(5);
 stroke(xc, yc, zc);
 rect(380, 1100,300,300,30);
 triangle(468, 1170, 468, 1330, 609,1250);
-
 fill(xc, yc, zc);
 textSize(70);
 textAlign(CENTER, BOTTOM);
 text("Click here to open the door", width/2, 1500);
 
-  if (mouseClicked) {
-  //clik here to open a door
-    if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
-
-      return 22;
-    } 
-  } 
   // tu dodać ifa zamykajacego obrazek drzwi gdy drzwi zostana zamkniete albo uplynie czas
-  return 21;
+
 }
 
-int clickingOptions()
+void mousePressed()
 {
   //clicking options
     // historia wejść
     if ( mouseX < width/5 && mouseY > 2050) {
-      
-      noStroke();
-      fill(150);
-      return 1;
+      opcje=1;
     } 
     // kamera
     if ( mouseX > width/5 && mouseX < 2*width/5 && mouseY > 2050) {
-      noStroke();
-      fill(150);
-      return 2;
+      opcje=2;
     } 
     // strona główna
     if ( mouseX > 2*width/5 && mouseX < 3*width/5 && mouseY > 2050) {
-      noStroke();
-      fill(150);
-      return 3;
+      opcje=3;
     }
     // adding a new member
     if ( mouseX > 3*width/5 && mouseX < 4*width/5 && mouseY > 2050) {
-      noStroke();
-      fill(150);
-      return 4;
+      opcje=4;
     } 
     // ustawienia
     if ( mouseX > 4*width/5 && mouseY > 2050) {
-      noStroke();
-      fill(150);
-      return 5;
+      opcje=5;
+    }
+    switch(opcje){
+  case 1: 
+    break;
+  case 2:
+    if (mouseX > width/2-400 && mouseX < width/2+400 && mouseY > height/2-350 && mouseY < height/2+350 ) {
+      link("http://192.168.0.11/mjpeg/1");
+    }
+    break;
+  case 3:
+    if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
+      otwarcie_drzwi = 22;
     } 
-    else
-    return 0;
-}
+    break;
+  case 4:
+  //clik here to add a new member
+    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > height/3 && mouseY < (height/3 + height/7) ) {
+      opcje=6;
+    }
+    break;
+  case 5:
+    
+    break;
+  case 6:
+  if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
+      opcje=4;
+    } 
+  break;
+  default:
+    break;
+  }
+    
+    }
+   
+
 void dolnyPasek(){
   rect(0, 2050, 0, 0, 0);
   image(historia_przed_photo, 0, 2050, width/5, width/5);
   image(kamera_przed_photo, width/5, 2050, width/5, width/5);
-  // image(..., 2*width/3, 2050, width/5, width/5);
+  image(ikona_drzwi, 2*width/5, 2050, width/5, width/5);
   image(newMember_przed_photo, 3*width/5, 2050, width/5, width/5);
   image(ustawienia_przed_photo, 4*width/5, 2050, width/5, width/5);
 }
@@ -247,10 +268,15 @@ void SiteKamerka(){
   dolnyPasek();
   image(kamera_po_photo, width/5, 2050, width/5, width/5);
   // tu trzeba dodać link do strony z widokiem z kamerki
+  fill(250);
+  textSize(100);
+  text("Click the icon to see camera view",100,100,850,500);
+  image(ikona_kamera,width/2-500, height/2-500, 1000, 1000);
+  
   
 }
 // nowy czlonek strona 4
-int SiteNewMember(){
+void SiteNewMember(){
   background(xb, yb, zb);
   dolnyPasek();
   image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
@@ -282,14 +308,6 @@ int SiteNewMember(){
   line(0, 120, width, 120);
   text("First you have to pair their device to the aplication!", (width/2), (height/3 + 500));
   
-  if (mousePressed) {
-  //clik here to add a new member
-    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > height/3 && mouseY < (height/3 + height/7) ) {
-      SiteAddingNewMember();
-      return 22;
-    } 
-  return 23;
-}
 }
 // ustawienia strona 5
 void SiteUstawienia() {
@@ -297,7 +315,7 @@ void SiteUstawienia() {
   dolnyPasek();
   image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
   text("Change to bright/ dark color theme", width/3,  height/3);
-  fill(przycisk);
+  fill(0);
   rect(width/3, height/3, width/3, height/5, 10);
   // ZMIANA TRYBU NA JASNY CIEMNY
   // po kliknieciu jej wartość się zmienia 
@@ -312,11 +330,4 @@ void SiteAddingNewMember() {
   fill(xp, yp, zp);
   rect(10, 50, 50, 10, 0);
   triangle(60, 30, 50, 50, 100, 0);
-  if (mousePressed) {
-  // STRZALECZKA GO BACK
-    if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
-      SiteNewMember();
-      return 22;
-    } 
-  
 }
