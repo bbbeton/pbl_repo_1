@@ -292,17 +292,16 @@ int SiteNewMember(){
 }
 }
 // ustawienia strona 5
-void SiteUstawienia(){
+void SiteUstawienia() {
   background(xb, yb, zb);
   dolnyPasek();
   image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
   text("Change to bright/ dark color theme", width/3,  height/3);
   fill(przycisk);
-  rect(width//3, height/3, 
+  rect(width/3, height/3, width/3, height/5, 10);
   // ZMIANA TRYBU NA JASNY CIEMNY
   // po kliknieciu jej wartość się zmienia 
   // deafult - (0, 149, 255) dark -  bright - 
-
 }
 void SiteAddingNewMember() {
   background(xb, yb, zb);
