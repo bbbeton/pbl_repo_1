@@ -18,13 +18,24 @@ float b;
 float c;
 int y;
 int k;
-//bacground
+// colors
+// background colors
 float xb=0;
 float yb=149;
 float zb=255;
+// text colors on the background
+float xc = 250; 
+float yc = 250;
+float zc = 250;
+// button colors
+float xp = 200;
+float yp = 200;
+float zp = 200;
+
 String message= "Home Sweet Home";
 int opcje = 3;
 int wifi;
+
 Letter[] letters;
 void setup() {
   orientation(PORTRAIT); 
@@ -147,23 +158,24 @@ class Letter {
 }
  int OpenDoorSite()
 {
-background(0, 149, 255);
+background(xb, yb, zb);
 noStroke();
-fill(230,230,230);
+fill(xc, yc, zc);
 image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
 dolnyPasek();
 
 fill(0, 149, 255);
 strokeWeight(5);
-stroke(230);
+stroke(xc, yc, zc);
 rect(380, 1100,300,300,30);
 triangle(468, 1170, 468, 1330, 609,1250);
 
-fill(230);
+fill(xc, yc, zc);
 textSize(70);
-text("Click here to open the door", 100, 1500);
+textAlign(CENTER, BOTTOM);
+text("Click here to open the door", width/2, 1500);
 
-  if (mousePressed) {
+  if (mouseClicked) {
   //clik here to open a door
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
 
@@ -182,14 +194,12 @@ int clickingOptions()
       
       noStroke();
       fill(150);
-      image(historia_po_photo, 0, 2050, width/5, width/5);
       return 1;
     } 
     // kamera
     if ( mouseX > width/5 && mouseX < 2*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      image(kamera_po_photo, width/5, 2050, width/5, width/5);
       return 2;
     } 
     // strona główna
@@ -202,14 +212,12 @@ int clickingOptions()
     if ( mouseX > 3*width/5 && mouseX < 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
       return 4;
     } 
     // ustawienia
     if ( mouseX > 4*width/5 && mouseY > 2050) {
       noStroke();
       fill(150);
-      image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
       return 5;
     } 
     else
@@ -219,32 +227,36 @@ void dolnyPasek(){
   rect(0, 2050, 0, 0, 0);
   image(historia_przed_photo, 0, 2050, width/5, width/5);
   image(kamera_przed_photo, width/5, 2050, width/5, width/5);
+  // image(..., 2*width/3, 2050, width/5, width/5);
   image(newMember_przed_photo, 3*width/5, 2050, width/5, width/5);
   image(ustawienia_przed_photo, 4*width/5, 2050, width/5, width/5);
 }
 // historia wejsc strona 1
 void SiteHistoriaWejsc(){
-  background(0, 149, 255);
+  background(xb, yb, zb);
   dolnyPasek();
-  fill(255);
+  image(historia_po_photo, 0, 2050, width/5, width/5);
+  fill(xc, yc, zc);
   rect(width/7, width/7, 5*width/7, 5*height/7, 15);
   // wstawiamy liste kto wchodzil 
 
 }
 // kamerka strona 2
 void SiteKamerka(){
-  background(0, 149, 255);
+  background(xb, yb, zb);
   dolnyPasek();
+  image(kamera_po_photo, width/5, 2050, width/5, width/5);
   // tu trzeba dodać link do strony z widokiem z kamerki
   
 }
 // nowy czlonek strona 4
 int SiteNewMember(){
-  background(0, 149, 255);
+  background(xb, yb, zb);
   dolnyPasek();
+  image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
   fill(230);
-  textSize(70);
   rect(width/3, height/3, width/3, height/7, 15);
+  textSize(70);
   fill(0);
   textAlign(CENTER, BOTTOM);
   line(0, 120, width, 120);
@@ -277,24 +289,33 @@ int SiteNewMember(){
       return 22;
     } 
   return 23;
-  
 }
 }
 // ustawienia strona 5
 void SiteUstawienia(){
-  background(0, 149, 255);
+  background(xb, yb, zb);
   dolnyPasek();
+  image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
+  text("Change to bright/ dark color theme", width/3,  height/3);
+  fill(przycisk);
+  rect(width//3, height/3, 
+  // ZMIANA TRYBU NA JASNY CIEMNY
+  // po kliknieciu jej wartość się zmienia 
+  // deafult - (0, 149, 255) dark -  bright - 
 
-  
 }
-void SiteAddingNewMember {
-  background(0, 149, 255);
+void SiteAddingNewMember() {
+  background(xb, yb, zb);
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
-  fill(255);
+  fill(xc, yc, zc);
   text("Provide the number of the new user", (50), (100));
- if (mousePressed) {
+  // rysowanie strzałeczki with geometric shapes
+  fill(xp, yp, zp);
+  rect(10, 50, 50, 10, 0);
+  triangle(60, 30, 50, 50, 100, 0);
+  if (mousePressed) {
   // STRZALECZKA GO BACK
-    if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50 {
+    if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
       SiteNewMember();
       return 22;
     } 
