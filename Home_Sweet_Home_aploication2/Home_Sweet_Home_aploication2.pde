@@ -23,10 +23,14 @@ int y;
 int k;
 int otwarcie_drzwi;
 // colors
-// background colors
+// background colors bright
 float xb=0;
 float yb=149;
 float zb=255;
+// background colors dark
+float xd = 13;
+float yd = 32;
+float zd = 140;
 // text colors on the background
 float xc = 250; 
 float yc = 250;
@@ -39,6 +43,10 @@ float zp = 200;
 String message= "Home Sweet Home";
 int opcje = 3;
 int wifi;
+
+// keyboard
+boolean keyboard = false;
+int value;
 
 Letter[] letters;
 void setup() {
@@ -215,7 +223,7 @@ void mousePressed()
     break;
   case 2:
     if (mouseX > width/2-400 && mouseX < width/2+400 && mouseY > height/2-350 && mouseY < height/2+350 ) {
-      link("http://192.168.0.11/mjpeg/1");
+      link("http://192.168.31.190/mjpeg/1");
     }
     break;
   case 3:
@@ -298,15 +306,27 @@ void SiteNewMember(){
   fill(255);
   textAlign(CENTER, BOTTOM);
   line(0, 120, width, 120);
-  text("Hi!", (width/2), (height/3 + 500));
+  text("Hello!", (width/2), (100));
   fill(255);
   textAlign(CENTER, BOTTOM);
   line(0, 120, width, 120);
-  text("Do you want to let someone have access to your gate?", (width/2), (height/3 + 500));
+  textSize(60);
+  text("Do you want to let someone", (width/2), (200));
   fill(255);
   textAlign(CENTER, BOTTOM);
   line(0, 120, width, 120);
-  text("First you have to pair their device to the aplication!", (width/2), (height/3 + 500));
+  textSize(60);
+  text("have access to your house?", (width/2), (300));
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  textSize(60);
+  line(0, 120, width, 120);
+  text("First you have to pair their device", (width/2), (400));
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  textSize(60);
+  line(0, 120, width, 120);
+  text("to the aplication!", (width/2), (500));
   
 }
 // ustawienia strona 5
@@ -314,9 +334,26 @@ void SiteUstawienia() {
   background(xb, yb, zb);
   dolnyPasek();
   image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
-  text("Change to bright/ dark color theme", width/3,  height/3);
-  fill(0);
-  rect(width/3, height/3, width/3, height/5, 10);
+  textSize(60);
+  fill(xc, yc, zc);
+  text("Change to bright/ dark color theme", width/2,  (100));
+  fill(0, 149, 255);
+  rect(width/3, height/3, width/6, height/5, 10);
+  fill(xd, yd, zd);
+  rect(width/2, height/3, width/6, height/5, 10);
+  // po kliknieciu zmiana koloru
+  // bright
+  if (mouseX > (width/3) && mouseX < (width/2) && mouseY > (height/3) && mouseY < (height/3 + height/5) ){
+    xb = 0;
+    yb = 149;
+    zb = 255;
+  }
+  // dark
+  if (mouseX > (width/2) && mouseX < (2*width/3) && mouseY > (height/3) && mouseY < (height/3 + height/5) ){
+    xb = 13;
+    yb = 32;
+    zb = 140;
+  }
   // ZMIANA TRYBU NA JASNY CIEMNY
   // po kliknieciu jej wartość się zmienia 
   // deafult - (0, 149, 255) dark -  bright - 
@@ -325,9 +362,52 @@ void SiteAddingNewMember() {
   background(xb, yb, zb);
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
   fill(xc, yc, zc);
-  text("Provide the number of the new user", (50), (100));
+  textSize(50);
+  text("Provide the number of the new user", (width/2), (100));
+  fill(xc, yc, zc);
+  rect(width/8, 150, 3*width/4, 100, 10);
+  text("Provide the name of the new user", (width/2), (500));
+  fill(xc, yc, zc);
+  rect(width/8, 550, 3*width/4, 100, 10);
+  text("Provide the surname of the new user", (width/2), (900));
+  fill(xc, yc, zc);
+  rect(width/8, 950, 3*width/4, 100, 10);
+  // otwieranie klawiatury
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
+    keyboardPressed();
+    text(key, width/8, 150);
+}
+
+//  }
+//  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 550 && mouseY < 550){
+
+//  }
+//  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 950 && mouseY < 1050 ){
+
+//  }
+
+  
+  
   // rysowanie strzałeczki with geometric shapes
   fill(xp, yp, zp);
-  rect(10, 50, 50, 10, 0);
+  rect(30, 50, 50, 10, 0);
   triangle(60, 30, 50, 50, 100, 0);
+}
+
+void keyboardPressed() {
+  if (!keyboard) {
+    openKeyboard();
+    keyboard = true;
+  } else {
+    closeKeyboard();
+    keyboard = false;
+  }
+}
+
+void keyPressed() {
+  if (value == 0) {
+    value = 255;
+  } else {
+    value = 0;
+  }
 }
