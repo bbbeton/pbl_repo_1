@@ -1,3 +1,6 @@
+import oscP5.*;
+import netP5.*;
+
 PFont myFont;
 PImage drzwi_zamkniete_photo;
 PImage drzwi_otwarte_photo; 
@@ -47,6 +50,12 @@ int wifi;
 // keyboard
 boolean keyboard = false;
 int value;
+//wifi
+String IP = " ";      //local IP plytki ESP
+int port = 8888;      //port do wysylania
+
+OscP5 oscP5;
+NetAddress myRemoteLocation;
 
 Letter[] letters;
 void setup() {
@@ -54,6 +63,10 @@ void setup() {
   fullScreen();
   fill(0);
   background(xb, yb, zb);
+  //wifi
+   oscP5 = new OscP5(this,9999);
+  myRemoteLocation = new NetAddress(IP,port);
+  
   drzwi_zamkniete_photo = loadImage("drzwi_zamkniete.png");
   drzwi_otwarte_photo = loadImage("drzwi_otwarte.png");
   ustawienia_przed_photo = loadImage("ustawienia_przed.png");
@@ -229,6 +242,9 @@ void mousePressed()
   case 3:
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       otwarcie_drzwi = 22;
+      OscMessage myMessage = new OscMessage("/int");
+      myMessage.add(22);
+      oscP5.send(myMessage, myRemoteLocation); 
     } 
     break;
   case 4:
