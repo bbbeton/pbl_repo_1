@@ -1,6 +1,11 @@
 PFont myFont;
 PImage drzwi_zamkniete_photo;
+PImage drzwi_zamkniete_photo_dark;
 PImage drzwi_otwarte_photo; 
+PImage drzwi_otwarte_photo_dark; 
+PImage temp_otwarte;
+PImage temp_zamkniete;
+
 PImage ustawienia_przed_photo;
 PImage ustawienia_po_photo;
 PImage kamera_przed_photo;
@@ -39,16 +44,25 @@ float zc = 250;
 float xp = 200;
 float yp = 200;
 float zp = 200;
+Letter[] letters;
 
 String message= "Home Sweet Home";
 int opcje = 3;
 int wifi;
 
-// keyboard
-boolean keyboard = false;
-int value;
+// klawiatura 
 
-Letter[] letters;
+//import android.app.PendingIntent;
+//import android.content.Intent;
+//import android.os.Bundle;
+import ketai.net.nfc.*;
+import ketai.ui.*;                                        // 1
+
+KetaiNFC ketaiNFC;
+
+String tagText = "";
+String tagStatus = "Tap screen to start";                 // 2
+
 void setup() {
   orientation(PORTRAIT); 
   fullScreen();
@@ -56,6 +70,11 @@ void setup() {
   background(xb, yb, zb);
   drzwi_zamkniete_photo = loadImage("drzwi_zamkniete.png");
   drzwi_otwarte_photo = loadImage("drzwi_otwarte.png");
+  drzwi_zamkniete_photo_dark = loadImage("drzwi_zamkniete_dark.png");
+  drzwi_otwarte_photo_dark = loadImage("drzwi_otwarte_dark.png");
+  temp_zamkniete = loadImage("drzwi_zamkniete.png");
+  temp_otwarte = loadImage("drzwi_otwarte.png");
+  
   ustawienia_przed_photo = loadImage("ustawienia_przed.png");
   ustawienia_po_photo = loadImage("ustawienia_po.png");
   kamera_przed_photo = loadImage("kamera_przed.png");
@@ -68,6 +87,9 @@ void setup() {
   ikona_drzwi = loadImage("ikona_drzwi.png");
   ikona_kamera = loadImage("ikona_kamera.png");
   myFont = loadFont("Bauhaus93-120.vlw"); //czcionka
+  
+  //myFont = createFont("Bauhaus93-120", 32);
+  
   textFont(myFont);
   // Create the array the same size as the String
   letters = new Letter[message.length()];
@@ -76,6 +98,10 @@ void setup() {
   for (int i = 0; i < message.length(); i++) {
    letters[i] = new Letter(x,1100,message.charAt(i));
    x += textWidth(message.charAt(i));
+   
+   if (ketaiNFC == null)
+    ketaiNFC = new KetaiNFC(this);
+  
   }
 }
 void draw() {
@@ -135,7 +161,7 @@ void draw() {
       stroke(230);
       rect(380, 1100,300,300,30);
       triangle(468, 1170, 468, 1330, 609,1250);
-      image(drzwi_otwarte_photo, 140, 0, 1100, 1100);
+      image(temp_otwarte, 140, 0, 1100, 1100);
     }
     break;
   case 4:
@@ -145,7 +171,7 @@ void draw() {
     SiteUstawienia();
     break;
   case 6:
-  SiteAddingNewMember();
+    SiteAddingNewMember();
   break;
   default:
     break;
@@ -179,7 +205,7 @@ noStroke();
 dolnyPasek();
 image(ikona_drzwi_po, 2*width/5, 2050, width/5, width/5);
 fill(xc, yc, zc);
-image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
+image(temp_zamkniete, 140, 0, 1100, 1100);
 
 fill(0, 149, 255);
 strokeWeight(5);
@@ -338,26 +364,28 @@ void SiteUstawienia() {
   fill(xc, yc, zc);
   text("Change to bright/ dark color theme", width/2,  (100));
   fill(0, 149, 255);
-  rect(width/3, height/3, width/6, height/5, 10);
+  rect((width/2-width/5), 200, width/5, height/6, 10);
   fill(xd, yd, zd);
-  rect(width/2, height/3, width/6, height/5, 10);
+  rect(width/2, 200, width/5, height/6, 10);
   // po kliknieciu zmiana koloru
   // bright
-  if (mouseX > (width/3) && mouseX < (width/2) && mouseY > (height/3) && mouseY < (height/3 + height/5) ){
+  if (mouseX > (width/2-width/5) && mouseX < (width/2) && mouseY > (200) && mouseY < (200 + height/6) ){
     xb = 0;
     yb = 149;
-    zb = 255;
+    zb = 255; 
+    temp_otwarte = drzwi_zamkniete_photo;
+    temp_zamkniete = drzwi_zamkniete_photo;
   }
   // dark
-  if (mouseX > (width/2) && mouseX < (2*width/3) && mouseY > (height/3) && mouseY < (height/3 + height/5) ){
+  if (mouseX > (width/2) && mouseX < (width/2+width/5) && mouseY > (200) && mouseY < (200 + height/6) ){
     xb = 13;
     yb = 32;
     zb = 140;
+    temp_otwarte = drzwi_otwarte_photo_dark; 
+    temp_zamkniete = drzwi_zamkniete_photo_dark;
   }
-  // ZMIANA TRYBU NA JASNY CIEMNY
-  // po kliknieciu jej wartość się zmienia 
-  // deafult - (0, 149, 255) dark -  bright - 
 }
+
 void SiteAddingNewMember() {
   background(xb, yb, zb);
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
@@ -374,8 +402,8 @@ void SiteAddingNewMember() {
   rect(width/8, 950, 3*width/4, 100, 10);
   // otwieranie klawiatury
   if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
-    keyboardPressed();
-    text(key, width/8, 150);
+    // klawiatura???
+    touchStarted();   
 }
 
 //  }
@@ -385,29 +413,42 @@ void SiteAddingNewMember() {
 //  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 950 && mouseY < 1050 ){
 
 //  }
-
-  
-  
   // rysowanie strzałeczki with geometric shapes
   fill(xp, yp, zp);
   rect(30, 50, 50, 10, 0);
-  triangle(60, 30, 50, 50, 100, 0);
+  triangle(60, 100, 50, 50, 100, 0);
 }
 
-void keyboardPressed() {
-  if (!keyboard) {
-    openKeyboard();
-    keyboard = true;
-  } else {
-    closeKeyboard();
-    keyboard = false;
-  }
-}
+//void onNFCEvent(String txt) {
+//  tagText = trim(txt);
+//  tagStatus = "Tag:";
+//}
 
+//void onNFCWrite(boolean result, String message) {
+//  if (result)
+//    tagStatus = "Writing Complete.";
+//}
+
+void touchStarted(){
+  KetaiKeyboard.toggle(this);                             
+  tagText = "";
+  tagStatus = "Type tag text:";
+  textAlign(CENTER, BOTTOM);  
+}
 void keyPressed() {
-  if (value == 0) {
-    value = 255;
-  } else {
-    value = 0;
+  if (key != CODED)                                       
+  {
+    tagStatus = "Write URL, then press ENTER to transmit";
+    tagText += key;                                       
+  }
+  if (key == ENTER)                                       
+  {
+    ketaiNFC.write(tagText);                              
+    tagStatus = "Touch tag to transmit:";
+    KetaiKeyboard.toggle(this);
+    textAlign(CENTER, CENTER);
+  } else if (keyCode == 67)                               // 10
+  {
+    tagText = tagText.substring(0, tagText.length()-1);   // 11
   }
 }
