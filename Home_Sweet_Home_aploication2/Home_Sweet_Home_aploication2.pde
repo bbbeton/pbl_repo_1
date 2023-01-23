@@ -175,14 +175,9 @@ c=1.666666666;
   case 3:
     OpenDoorSite();
     if(otwarcie_drzwi == 22){
-      fill(9, 74, 171);
-      strokeWeight(5);
-      stroke(230);
-      rect(380, 1100,300,300,30);
-      triangle(468, 1170, 468, 1330, 609,1250);
+     
       image(temp_otwarte, 140, 0, 1100, 1100);
-<<<<<<< HEAD
-=======
+
     }
     else if(otwarcie_drzwi == 13)
     {
@@ -192,7 +187,6 @@ c=1.666666666;
       rect(380, 1100,300,300,30);
       triangle(468, 1170, 468, 1330, 609,1250);
       image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
->>>>>>> 89339f7e3e94828b78a1ec61f32512c51b7774be
     }
     break;
   case 4:
@@ -255,6 +249,7 @@ text("Click here to open the door", width/2, 1500);
 void mousePressed()
 {
   //clicking options
+  
     // historia wejść
     if ( mouseX < width/5 && mouseY > 2050) {
       opcje=1;
@@ -285,6 +280,11 @@ void mousePressed()
     break;
   case 3:
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
+      fill(9, 74, 171);
+      strokeWeight(5);
+      stroke(230);
+      rect(380, 1100,300,300,30);
+      triangle(468, 1170, 468, 1330, 609,1250);
       otwarcie_drzwi = 22;
       OscMessage myMessage = new OscMessage("/int");
       myMessage.add(otwarcie_drzwi);
@@ -300,9 +300,12 @@ void mousePressed()
   case 5:
     
     break;
+  // site adding new member
   case 6:{
-  if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
-      opcje=4;
+  // powrót do poprzedniej strony
+  if (mouseX > 0 && mouseX < 75 && mouseY > 0 && mouseY < 75) {
+    opcje = 4;
+    SiteNewMember();
   }
     // otwieranie klawiatury
   if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
@@ -406,7 +409,7 @@ void SiteNewMember(){
   textAlign(CENTER, BOTTOM);
   textSize(60);
   line(0, 120, width, 120);
-  text("to the aplication!", (width/2), (500));
+  text("to the application!", (width/2), (500));
   
 }
 // ustawienia strona 5
@@ -480,7 +483,7 @@ void SiteAddingNewMember() {
   // rysowanie strzałeczki with geometric shapes
   fill(xp, yp, zp);
   rect(30, 50, 50, 10, 0);
-  triangle(60, 0, 60, 50, 100, 0);
+  triangle(50, 75, 50 , 35, 20, 55);
 }
 
 void keyPressed() {
@@ -504,7 +507,7 @@ void keyPressed() {
     
     
   }
-   if (keyCode == 67)                               // 10
+   if (keyCode == 67)
   {
     switch(tempText)
     {
