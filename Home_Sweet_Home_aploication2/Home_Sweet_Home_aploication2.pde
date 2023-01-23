@@ -29,7 +29,6 @@ float b;
 float c;
 int y;
 int k;
-int otwarcie_drzwi;
 // colors
 // background colors bright
 float xb=0;
@@ -54,8 +53,10 @@ int opcje = 3;
 int wifi;
 
 //wifi
-String IP = " ";      //local IP plytki ESP
-int port = 8888;      //port do wysylania
+String remoteIP = "192.168.0.227";      //local IP plytki ESP
+int remotePort = 8888;                  //port do wysylania
+int localPort = 9999;                   //lokalny port
+int otwarcie_drzwi = 0;
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
@@ -81,8 +82,8 @@ void setup() {
   fill(0);
   background(xb, yb, zb);
   //wifi
-   oscP5 = new OscP5(this,9999);
-  myRemoteLocation = new NetAddress(IP,port);
+  oscP5 = new OscP5(this,localPort);
+  myRemoteLocation = new NetAddress(remoteIP,remotePort);
   
   drzwi_zamkniete_photo = loadImage("drzwi_zamkniete.png");
   drzwi_otwarte_photo = loadImage("drzwi_otwarte.png");
@@ -181,6 +182,15 @@ c=1.666666666;
       triangle(468, 1170, 468, 1330, 609,1250);
       image(temp_otwarte, 140, 0, 1100, 1100);
     }
+    else if(otwarcie_drzwi == 13)
+    {
+      fill(0, 149, 255);
+      strokeWeight(5);
+      stroke(xc, yc, zc);
+      rect(380, 1100,300,300,30);
+      triangle(468, 1170, 468, 1330, 609,1250);
+      image(drzwi_zamkniete_photo, 140, 0, 1100, 1100);
+    }
     break;
   case 4:
     SiteNewMember();
@@ -274,7 +284,7 @@ void mousePressed()
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       otwarcie_drzwi = 22;
       OscMessage myMessage = new OscMessage("/int");
-      myMessage.add(22);
+      myMessage.add(otwarcie_drzwi);
       oscP5.send(myMessage, myRemoteLocation); 
     } 
     break;
@@ -508,4 +518,9 @@ void keyPressed() {
       break;
     }
   }
+}
+
+void oscEvent(OscMessage theOscMessage)
+{
+  otwarcie_drzwi = theOscMessage.get(0).intValue();
 }
