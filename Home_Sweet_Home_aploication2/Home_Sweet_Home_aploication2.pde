@@ -29,6 +29,7 @@ float b;
 float c;
 int y;
 int k;
+int newCard;
 // colors
 // background colors bright
 float xb=0;
@@ -49,7 +50,7 @@ float zp = 200;
 Letter[] letters;
 
 String message= "Home Sweet Home";
-int opcje = 3;
+int opcje = 70;
 int wifi;
 
 //wifi
@@ -75,6 +76,9 @@ String firstText = "";
 String secondText = "";
 String thirdText = "";
 int tempText;               // 2
+
+String Password = "";
+String Username = "";
 
 void setup() {
   orientation(PORTRAIT); 
@@ -197,7 +201,13 @@ c=1.666666666;
     break;
   case 6:
     SiteAddingNewMember();
-  break;
+    break;
+  case 7:
+    SiteAddingNewCard();
+    break;
+  case 70:
+    SiteLoggingIn();
+    break;
   default:
     break;
   }
@@ -232,7 +242,7 @@ image(ikona_drzwi_po, 2*width/5, 2050, width/5, width/5);
 fill(xc, yc, zc);
 image(temp_zamkniete, 140, 0, 1100, 1100);
 
-fill(0, 149, 255);
+fill(xb, yb, zb);
 strokeWeight(5);
 stroke(xc, yc, zc);
 rect(380, 1100,300,300,30);
@@ -243,13 +253,17 @@ textAlign(CENTER, BOTTOM);
 text("Click here to open the door", width/2, 1500);
 
   // tu dodać ifa zamykajacego obrazek drzwi gdy drzwi zostana zamkniete albo uplynie czas
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
 
 }
 
 void mousePressed()
 {
   //clicking options
-  
+  if(opcje == 1 || opcje == 2 || opcje == 3 || opcje == 4 || opcje == 5){
     // historia wejść
     if ( mouseX < width/5 && mouseY > 2050) {
       opcje=1;
@@ -270,14 +284,18 @@ void mousePressed()
     if ( mouseX > 4*width/5 && mouseY > 2050) {
       opcje=5;
     }
+  }
     switch(opcje){
+  // historia wejsc
   case 1: 
     break;
+  //  kamerka
   case 2:
     if (mouseX > width/2-400 && mouseX < width/2+400 && mouseY > height/2-350 && mouseY < height/2+350 ) {
       link("http://192.168.31.190/mjpeg/1");
     }
     break;
+  // strona glowna
   case 3:
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       fill(9, 74, 171);
@@ -291,15 +309,24 @@ void mousePressed()
       oscP5.send(myMessage, myRemoteLocation); 
     } 
     break;
+  // adding a new member
   case 4:
-  //clik here to add a new member
-    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > height/3 && mouseY < (height/3 + height/7) ) {
-      opcje=6;
+  // click here to add a new member
+    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > (height/3  - 150) && mouseY < (height/3 + height/7 - 150) ) {
+      fill(150);
+      rect(width/3, height/3  - 150, width/3, height/7, 15);
+      opcje = 6;
+    }
+  // click here to add a new card
+    if (mouseX > width/3 && mouseX < 2*width/3 && mouseY > (height/3 +height/7 + 150) && mouseY < (height/3 + 2*height/7 + 150) ) {
+      fill(150);
+      rect(width/3, height/3 +height/7 + 150, width/3, height/7, 15);
+      opcje = 7;
     }
     break;
   case 5:
-    
     break;
+    
   // site adding new member
   case 6:{
   // powrót do poprzedniej strony
@@ -308,28 +335,58 @@ void mousePressed()
     SiteNewMember();
   }
     // otwieranie klawiatury
-  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
     firstText = "";
     tempText=1;
     
   }
-  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 550 && mouseY < 650){
+  else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
     secondText = "";
     tempText=2;
   }
-  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 950 && mouseY < 1050 ){
+  else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 1200 && mouseY < 1300 ){
     // klawiatura
     KetaiKeyboard.toggle(this);
     thirdText = "";
     tempText=3;
+  } else {
+    KetaiKeyboard.hide(this);
   }
-
   break;
-    }
+  }
+  
+  // ADDING A CARD
+  case 7: {
+  if (mouseX > 0 && mouseX < 75 && mouseY > 0 && mouseY < 75) {
+    opcje = 4;
+    SiteNewMember();
+  }
+  break;
+  }
+  
+  // SITE LOGGING IN
+  case 70: {
+    if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
+    // klawiatura
+    KetaiKeyboard.toggle(this);                             
+    Username = "";
+    tempText=4;
+    
+  }
+  else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
+    // klawiatura
+    KetaiKeyboard.toggle(this);                             
+    Password = "";
+    tempText=5;
+  } else {
+    KetaiKeyboard.hide(this);
+  }
+    break; 
+  }
   default:
     break;
   } 
@@ -352,6 +409,10 @@ void SiteHistoriaWejsc(){
   rect(width/7, width/7, 5*width/7, 5*height/7, 15);
   // wstawiamy liste kto wchodzil 
 
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
 }
 // kamerka strona 2
 void SiteKamerka(){
@@ -364,31 +425,22 @@ void SiteKamerka(){
   text("Click the icon to see camera view",100,100,850,500);
   image(ikona_kamera,width/2-500, height/2-500, 1000, 1000);
   
-  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);  
 }
+
 // nowy czlonek strona 4
 void SiteNewMember(){
+  strokeWeight(5);
   background(xb, yb, zb);
   dolnyPasek();
   image(newMember_po_photo, 3*width/5, 2050, width/5, width/5);
-  fill(230);
-  rect(width/3, height/3, width/3, height/7, 15);
-  textSize(70);
-  fill(0);
-  textAlign(CENTER, BOTTOM);
-  line(0, 120, width, 120);
-  text("Add", (width/2), (height/3 + 100 ));
-  fill(0);
-  textAlign(CENTER, BOTTOM);
-  line(0, 120, width, 120);
-  text("a new", (width/2), (height/3 + 200));
-  fill(0);
-  textAlign(CENTER, BOTTOM);
-  line(0, 120, width, 120);
-  text("member", (width/2), (height/3 + 300));
+
   fill(255);
   textAlign(CENTER, BOTTOM);
   line(0, 120, width, 120);
+  textSize(75);
   text("Hello!", (width/2), (100));
   fill(255);
   textAlign(CENTER, BOTTOM);
@@ -411,10 +463,59 @@ void SiteNewMember(){
   line(0, 120, width, 120);
   text("to the application!", (width/2), (500));
   
+  // przycisk dodania nowego użytkownika
+  fill(210);
+  rect(width/3, height/3  - 150, width/3, height/7, 15);
+  textSize(70);
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("Add", (width/2), (height/3 - 50));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("a new", (width/2), (height/3 + 50));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("member", (width/2), (height/3 + 150));
+  
+  fill(255);
+  textAlign(CENTER, BOTTOM);
+  textSize(60);
+  line(0, 120, width, 120);
+  text("If you want to add a new card", (width/2), (height/3 + 330));
+  text("Click here", (width/2), (height/3 + 400));
+  
+  // przycisk dodania nowej karty
+  fill(210);
+  rect(width/3, height/3 +height/7 + 150, width/3, height/7, 15);
+  textSize(70);
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("Add", (width/2), (height/3 +height/7 + 250));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("a new", (width/2), (height/3 +height/7 + 350));
+  fill(0);
+  textAlign(CENTER, BOTTOM);
+  line(0, 120, width, 120);
+  text("card", (width/2), (height/3 +height/7 + 450));
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
+  
 }
 // ustawienia strona 5
 void SiteUstawienia() {
   background(xb, yb, zb);
+  
+  strokeWeight(5);
+  stroke(255);
+  
   dolnyPasek();
   image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
   textSize(60);
@@ -442,49 +543,162 @@ void SiteUstawienia() {
     temp_otwarte = drzwi_otwarte_photo_dark; 
     temp_zamkniete = drzwi_zamkniete_photo_dark;
   }
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
 }
 
 void SiteAddingNewMember() {
+  newCard = 0;
+  strokeWeight(5);
   background(xb, yb, zb);
+  textSize(60);
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
   fill(xc, yc, zc);
-  textSize(50);
   textAlign(CENTER, CENTER);
-  text("Provide the number of the new user", (width/2), (100));
+  text("Provide the number of the new user", (width/2), (350));
   fill(xc, yc, zc);
-  rect(width/8, 150, 3*width/4, 100, 10);
+  rect(width/8, 400, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(60);
-  text(firstText, width/8 + 20, 177, 3*width/4, 100);
+  text(firstText, width/8 + 20, 177+250, 3*width/4, 100);
   
   fill(xc, yc, zc);
-  textSize(50);
   textAlign(CENTER, CENTER);
-  text("Provide the name of the new user", (width/2), (500));
+  text("Provide the name of the new user", (width/2), (750));
   fill(xc, yc, zc);
-  rect(width/8, 550, 3*width/4, 100, 10);
+  rect(width/8, 800, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(60);
-  text(secondText, width/8 + 20, 577, 3*width/4, 100);
+  text(secondText, width/8 + 20, 577 + 250, 3*width/4, 100);
   
   fill(xc, yc, zc);
-  textSize(50);
   textAlign(CENTER, CENTER);  
-  text("Provide the surname of the new user", (width/2), (900));
+  text("Provide the surname of the new user", (width/2), (1150));
   fill(xc, yc, zc);
-  rect(width/8, 950, 3*width/4, 100, 10);
+  rect(width/8, 1200, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  textSize(60);
-  text(thirdText, width/8 + 20, 977, 3*width/4, 100);
-
+  text(thirdText, width/8 + 20, 977 + 250, 3*width/4, 100);
+  textSize(70);
+  
+  rectMode(CENTER);
+  fill(255);
+  rect(width/2, 1700, 350, 350);
+  rectMode(CORNER);
+  textAlign(CENTER, CENTER);
+  fill(0);
+  textSize(90);
+  text("Submit", width/2, 1700);
+  
   // rysowanie strzałeczki with geometric shapes
-  fill(xp, yp, zp);
-  rect(30, 50, 50, 10, 0);
-  triangle(50, 75, 50 , 35, 20, 55);
+  strokeWeight(5);
+  stroke(255);
+  fill(xb, yb, zb);
+  rect(0,0, 120, 120, 0);
+  noStroke();
+  fill(255);
+  rect(40, 50, 60, 20, 0);
+  triangle(60, 95, 60 , 25, 20, 60);
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
 }
+
+void SiteAddingNewCard(){
+  newCard = 0;
+  background(xb, yb, zb);
+  strokeWeight(5);
+  stroke(255);
+  
+  fill(255);
+  textAlign(CENTER, TOP);
+  textSize(70);
+  text("Press the button", width/2, (height/6 + 90));
+  text("to activate pairing", width/2, (height/6 + 200));  
+  fill(42, 62, 175);
+  rectMode(CENTER);
+  rect(width/2, height/6 + 500, 2*width/5, 2*width/5);
+  rectMode(CORNER);
+  
+  if(mouseX > (width/2 - 2*width/5) && mouseX < (width/2 + 2*width/5) && mouseY > (height/6 + 600 - 2*width/5 - 100) && mouseY < (height/6 + 600 + 2*width/5 - 100)){
+    newCard = 1;
+  }
+  switch (newCard){
+  case 1: {
+    fill(255);
+    textAlign(CENTER, TOP);
+    //line(0, 120, width, 120);
+    textSize(100);
+    text("Touch the scanner", width/2, (2* height/3));
+    text("with your new card", width/2, (2 * height/3  + 100));
+    break;
+  }
+  default:
+  break;
+  }
+  
+  // rysowanie strzałeczki with geometric shapes
+  strokeWeight(5);
+  stroke(255);
+  fill(xb, yb, zb);
+  rect(0,0, 120, 120, 0);
+  noStroke();
+  fill(255);
+  rect(40, 50, 60, 20, 0);
+  triangle(60, 95, 60 , 25, 20, 60);
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
+}
+
+void SiteLoggingIn(){
+  strokeWeight(5);
+  background(xb, yb, zb);
+  textSize(60);
+  
+  text("Hello there", width/2, 200);
+  fill(xc, yc, zc);
+  textAlign(CENTER, CENTER);
+  text("Username / name", (width/2), (350));
+  fill(xc, yc, zc);
+  rect(width/8, 400, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  text(Username, width/8 + 20, 177+250, 3*width/4, 100);
+  
+  fill(xc, yc, zc);
+  textAlign(CENTER, CENTER);
+  text("Password", (width/2), (750));
+  fill(xc, yc, zc);
+  rect(width/8, 800, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  text(Password, width/8 + 20, 577 + 250, 3*width/4, 100);
+  
+  rectMode(CENTER);
+  fill(255);
+  rect(width/2, 1700, 350, 350);
+  rectMode(CORNER);
+  textAlign(CENTER, CENTER);
+  fill(0);
+  textSize(90);
+  text("Submit", width/2, 1700);
+  
+  // TRZEBA ZABEZPIECZYC KIEDY SUBMIT DZIALA
+  
+  if(mouseX > (width/2- 350) && mouseX < (width/2 + 350) && mouseY > (1350) && mouseY < (2050)){
+    opcje = 3;
+  }
+  
+  text("Sign in", width/2, 2000);
+  line(0, 120, width, 0);
+  
+  
+}
+
 
 void keyPressed() {
   if (key != CODED)                                       
@@ -520,6 +734,13 @@ void keyPressed() {
     case 3:
       thirdText = thirdText.substring(0, thirdText.length()-1);
       break;
+    case 4:
+      Username = Username.substring(0, Username.length()-1);
+      break;
+    case 5:
+      Password = Password.substring(0, Password.length()-1);
+      break;
+
     default:
       break;
     }
