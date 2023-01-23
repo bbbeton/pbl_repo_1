@@ -82,9 +82,13 @@ String newUserNumber = "";
 String newUserName = "";
 String newUserSurname = "";
 int tempText; 
+int NewUserSubmitted = 0; // gdy dane gotowe do przeslania == 1
 // sygnal - chcemy dodac nowa karte
 int newCard;                  //przycisk został klikniety == 1, czyli uzytkownik chce dodac nowa karte
-
+// signing up
+String NewUsername ="";
+String NewPasswordRepeat = "";
+String NewPassword = "";
 
 
 void setup() {
@@ -212,6 +216,9 @@ c=1.666666666;
   case 7:
     SiteAddingNewCard();
     break;
+  case 8:
+    SiteSigningUp();
+    break;
   case 70:
     SiteLoggingIn();
     break;
@@ -333,7 +340,6 @@ void mousePressed()
     break;
   case 5:
     break;
-    
   // site adding new member
   case 6:{
   // powrót do poprzedniej strony
@@ -360,40 +366,81 @@ void mousePressed()
     KetaiKeyboard.toggle(this);
     newUserSurname = "";
     tempText=3;
-  } else {
+  } else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
+    NewUserSubmitted = 1;
+  }
+  else {
     KetaiKeyboard.hide(this);
   }
   break;
   }
   
   // ADDING A CARD
-  case 7: {
+  case 7: 
   if (mouseX > 0 && mouseX < 75 && mouseY > 0 && mouseY < 75) {
     opcje = 4;
     SiteNewMember();
   }
   break;
-  }
-  
-  // SITE LOGGING IN
-  case 70: {
+    
+  // Sign up
+  case 8: 
+    // cofnięcie się do logowania
+    if (mouseX > 0 && mouseX < 75 && mouseY > 0 && mouseY < 75) {
+      opcje = 70;
+      SiteLoggingIn();
+      // otwieranie klawiatury
     if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
+      // klawiatura
+      KetaiKeyboard.toggle(this);                             
+      NewUsername = "";
+      tempText=6;
+    
+    }
+    else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
+      // klawiatura
+      KetaiKeyboard.toggle(this);                             
+      NewPassword = "";
+      tempText=7;
+    }
+    else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 1200 && mouseY < 1300 ){
+      // klawiatura
+      KetaiKeyboard.toggle(this);
+      NewPasswordRepeat = "";
+      tempText=8;
+    } else {
+      KetaiKeyboard.hide(this);
+    }
+    }
+    break;
+  // SITE LOGGING IN
+  case 70: 
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
     Username = "";
-    tempText=4;
-    
+    tempText=4; 
   }
   else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
     Password = "";
     tempText=5;
+  } 
+  // ------------------------ SUBMIT ---------------------------
+  // zabezpieczyc kiedy dziala - login haslo sie zgadzaja+ przycisk klikniety -> przejscie na glowna strone
+  else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
+    opcje = 3; // przejscie na strone główną
+    OpenDoorSite();
+  }
+  // przejscie 
+  else if(mouseX > (333) && mouseX < (758) && mouseY > (1950) && mouseY < (2050)){
+   opcje = 8; // tworzenie nowego konta - signing up 
+   SiteSigningUp();
   } else {
     KetaiKeyboard.hide(this);
-  }
+  } 
     break; 
-  }
   default:
     break;
   } 
@@ -556,6 +603,7 @@ void SiteUstawienia() {
 }
 
 void SiteAddingNewMember() {
+  NewUserSubmitted = 0;
   newCard = 0;
   strokeWeight(5);
   background(xb, yb, zb);
@@ -666,6 +714,7 @@ void SiteLoggingIn(){
   background(xb, yb, zb);
   textSize(60);
   
+  fill(255);
   text("Hello there", width/2, 200);
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);
@@ -694,15 +743,73 @@ void SiteLoggingIn(){
   textSize(90);
   text("Submit", width/2, 1700);
   
-  // TRZEBA ZABEZPIECZYC KIEDY SUBMIT DZIALA
-  
-  if(mouseX > (width/2- 350) && mouseX < (width/2 + 350) && mouseY > (1350) && mouseY < (2050)){
-    opcje = 3;
-  }
-  
+  fill(0);
   text("Sign in", width/2, 2000);
-  line(0, 120, width, 0);
+  fill(0);
+  line(width/3, 2050, 2*width/3, 2050);
   
+  
+}
+void SiteSigningUp(){
+  strokeWeight(5);
+  background(xb, yb, zb);
+  textSize(60);
+  
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("To log in", width/2, 100);
+  text("Fill out the form below:", width/2, 175);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("New: Username / name", (width/2), (350));
+  fill(xc, yc, zc);
+  rect(width/8, 400, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  text(NewUsername, width/8 + 20, 177+250, 3*width/4, 100);
+  
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("Password:", (width/2), (750));
+  fill(xc, yc, zc);
+  rect(width/8, 800, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  text(NewPassword, width/8 + 20, 577 + 250, 3*width/4, 100);
+
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text("Repeat the Password:", (width/2), (1050));
+  fill(xc, yc, zc);
+  rect(width/8, 1200, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  text(NewPasswordRepeat, width/8 + 20, 977 + 250, 3*width/4, 100);
+  
+  rectMode(CENTER);
+  fill(255);
+  rect(width/2, 1700, 350, 350);
+  rectMode(CORNER);
+  textAlign(CENTER, CENTER);
+  fill(0);
+  textSize(90);
+  text("Submit", width/2, 1700);  
+  
+  // rysowanie strzałeczki with geometric shapes
+  strokeWeight(5);
+  stroke(255);
+  fill(xb, yb, zb);
+  rect(0,0, 120, 120, 0);
+  noStroke();
+  fill(255);
+  rect(40, 50, 60, 20, 0);
+  triangle(60, 95, 60 , 25, 20, 60);
+  
+  textSize(70);
+  strokeWeight(5);
+  stroke(255);
+  
+  fill(255);
   
 }
 
@@ -727,6 +834,15 @@ void keyPressed() {
       break;
     case 5:
       Password += key;
+      break;
+    case 6:
+      NewUsername += key;
+      break;
+    case 7:
+      NewPassword += key;
+      break;
+    case 8:
+      NewPasswordRepeat += key;
       break;
     default:
       break;
@@ -753,7 +869,15 @@ void keyPressed() {
     case 5:
       Password = Password.substring(0, Password.length()-1);
       break;
-
+    case 6:
+      NewUsername = NewUsername.substring(0, NewUsername.length()-1);
+      break;
+    case 7:
+      NewPasswordRepeat = NewPasswordRepeat.substring(0, NewPasswordRepeat.length()-1);
+      break;
+    case 8:
+      NewPassword = NewPassword.substring(0, NewPassword.length()-1);
+      break;
     default:
       break;
     }
