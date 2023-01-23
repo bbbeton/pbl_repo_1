@@ -29,7 +29,6 @@ float b;
 float c;
 int y;
 int k;
-int newCard;
 // colors
 // background colors bright
 float xb=0;
@@ -72,13 +71,21 @@ import ketai.ui.*;                                        // 1
 
 KetaiNFC ketaiNFC;
 
-String firstText = "";
-String secondText = "";
-String thirdText = "";
-int tempText;               // 2
-
+// ----------------------------------------------
+//  to co jest potrzebne do komunikacji:
+// ----------------------------------------------
+// logowanie
 String Password = "";
 String Username = "";
+// dodanie nowego czlonka
+String newUserNumber = "";
+String newUserName = "";
+String newUserSurname = "";
+int tempText; 
+// sygnal - chcemy dodac nowa karte
+int newCard;                  //przycisk został klikniety == 1, czyli uzytkownik chce dodac nowa karte
+
+
 
 void setup() {
   orientation(PORTRAIT); 
@@ -338,20 +345,20 @@ void mousePressed()
   if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
-    firstText = "";
+    newUserNumber = "";
     tempText=1;
     
   }
   else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
-    secondText = "";
+    newUserName = "";
     tempText=2;
   }
   else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 1200 && mouseY < 1300 ){
     // klawiatura
     KetaiKeyboard.toggle(this);
-    thirdText = "";
+    newUserSurname = "";
     tempText=3;
   } else {
     KetaiKeyboard.hide(this);
@@ -561,7 +568,7 @@ void SiteAddingNewMember() {
   rect(width/8, 400, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(firstText, width/8 + 20, 177+250, 3*width/4, 100);
+  text(newUserNumber, width/8 + 20, 177+250, 3*width/4, 100);
   
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);
@@ -570,7 +577,7 @@ void SiteAddingNewMember() {
   rect(width/8, 800, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(secondText, width/8 + 20, 577 + 250, 3*width/4, 100);
+  text(newUserName, width/8 + 20, 577 + 250, 3*width/4, 100);
   
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);  
@@ -579,7 +586,7 @@ void SiteAddingNewMember() {
   rect(width/8, 1200, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(thirdText, width/8 + 20, 977 + 250, 3*width/4, 100);
+  text(newUserSurname, width/8 + 20, 977 + 250, 3*width/4, 100);
   textSize(70);
   
   rectMode(CENTER);
@@ -707,13 +714,19 @@ void keyPressed() {
     switch(tempText)
     {
     case 1:
-      firstText += key;
+      newUserNumber += key;
       break;
     case 2:
-      secondText += key;
+      newUserName += key;
       break;    
     case 3:
-      thirdText += key;
+      newUserSurname += key;
+      break;
+    case 4:
+      Username += key;
+      break;
+    case 5:
+      Password += key;
       break;
     default:
       break;
@@ -726,13 +739,13 @@ void keyPressed() {
     switch(tempText)
     {
     case 1:
-      firstText = firstText.substring(0, firstText.length()-1);      
+      newUserNumber = newUserNumber.substring(0, newUserNumber.length()-1);      
       break;
     case 2:
-      secondText = secondText.substring(0, secondText.length()-1);
+      newUserName = newUserName.substring(0, newUserName.length()-1);
       break;    
     case 3:
-      thirdText = thirdText.substring(0, thirdText.length()-1);
+      newUserSurname = newUserSurname.substring(0, newUserSurname.length()-1);
       break;
     case 4:
       Username = Username.substring(0, Username.length()-1);
