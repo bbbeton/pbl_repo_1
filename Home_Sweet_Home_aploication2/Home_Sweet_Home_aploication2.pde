@@ -1,3 +1,6 @@
+import oscP5.*;
+import netP5.*;
+
 PFont myFont;
 PImage drzwi_zamkniete_photo;
 PImage drzwi_zamkniete_photo_dark;
@@ -50,6 +53,13 @@ String message= "Home Sweet Home";
 int opcje = 3;
 int wifi;
 
+//wifi
+String IP = " ";      //local IP plytki ESP
+int port = 8888;      //port do wysylania
+
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+
 // klawiatura 
 
 //import android.app.PendingIntent;
@@ -60,14 +70,20 @@ import ketai.ui.*;                                        // 1
 
 KetaiNFC ketaiNFC;
 
-String tagText = "";
-String tagStatus = "Tap screen to start";                 // 2
+String firstText = "";
+String secondText = "";
+String thirdText = "";
+int tempText;               // 2
 
 void setup() {
   orientation(PORTRAIT); 
   fullScreen();
   fill(0);
   background(xb, yb, zb);
+  //wifi
+   oscP5 = new OscP5(this,9999);
+  myRemoteLocation = new NetAddress(IP,port);
+  
   drzwi_zamkniete_photo = loadImage("drzwi_zamkniete.png");
   drzwi_otwarte_photo = loadImage("drzwi_otwarte.png");
   drzwi_zamkniete_photo_dark = loadImage("drzwi_zamkniete_dark.png");
@@ -105,46 +121,48 @@ void setup() {
   }
 }
 void draw() {
-// ZAKOMENTOWANE DO CZASU PRACY NAD RESZTĄ KODU
-// -------------------------------------
-// if(millis()<6000)
-// {
-//    time=5000/30;
-//  background(xb, yb, zb);
-// for (int i = 0; i < letters.length + 15; i++) {
-//    // Display all letters
-//a=15.333333333;
-//b=5.4;
-//c=1.666666666;
-//    if(millis()>time)
-//    {
-//      if(i>=15)
-//      {
-//        y=15;
-//         for(k=i-15; k<15;k++)
-//      {
-//         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
-//         y--;
-//      }
-//      for(k=i-15;k>=0;k--)
-//      letters[k].display(230,230,230);
-//      }
-//      else
-//      {
-//        y=1;
-//      for(k=i; k>=0;k--)
-//      {
-//         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
-//         y++;
-//      }
-//      }
-//      
-//    }
-//    time+=5000/30;
-//  }
-//  }
-//  else
-//  {
+  /*
+ ZAKOMENTOWANE DO CZASU PRACY NAD RESZTĄ KODU
+ -------------------------------------
+ if(millis()<6000)
+ {
+    time=5000/30;
+  background(xb, yb, zb);
+ for (int i = 0; i < letters.length + 15; i++) {
+    // Display all letters
+a=15.333333333;
+b=5.4;
+c=1.666666666;
+    if(millis()>time)
+    {
+      if(i>=15)
+      {
+        y=15;
+         for(k=i-15; k<15;k++)
+      {
+         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+         y--;
+      }
+      for(k=i-15;k>=0;k--)
+      letters[k].display(230,230,230);
+      }
+      else
+      {
+        y=1;
+      for(k=i; k>=0;k--)
+      {
+         letters[k].display(y*a+xb,y*b +yb,zb-y*c);
+         y++;
+      }
+      }
+      
+    }
+    time+=5000/30;
+  }
+  }
+  else
+  {
+    */
   // różne strony
   switch(opcje){
   case 1: 
@@ -255,6 +273,9 @@ void mousePressed()
   case 3:
     if (mouseX > 380 && mouseX < 680 && mouseY > 1100 && mouseY < 1400 ) {
       otwarcie_drzwi = 22;
+      OscMessage myMessage = new OscMessage("/int");
+      myMessage.add(22);
+      oscP5.send(myMessage, myRemoteLocation); 
     } 
     break;
   case 4:
@@ -266,17 +287,37 @@ void mousePressed()
   case 5:
     
     break;
-  case 6:
+  case 6:{
   if (mouseX > 0 && mouseX < 50 && mouseY > 0 && mouseY < 50) {
       opcje=4;
-    } 
+  }
+    // otwieranie klawiatury
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
+    // klawiatura
+    KetaiKeyboard.toggle(this);                             
+    firstText = "";
+    tempText=1;
+    
+  }
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 550 && mouseY < 650){
+    // klawiatura
+    KetaiKeyboard.toggle(this);                             
+    secondText = "";
+    tempText=2;
+  }
+  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 950 && mouseY < 1050 ){
+    // klawiatura
+    KetaiKeyboard.toggle(this);
+    thirdText = "";
+    tempText=3;
+  }
+
   break;
+    }
   default:
     break;
-  }
-    
-    }
-   
+  } 
+}
 
 void dolnyPasek(){
   rect(0, 2050, 0, 0, 0);
@@ -362,6 +403,7 @@ void SiteUstawienia() {
   image(ustawienia_po_photo, 4*width/5, 2050, width/5, width/5);
   textSize(60);
   fill(xc, yc, zc);
+  textAlign(CENTER, CENTER);
   text("Change to bright/ dark color theme", width/2,  (100));
   fill(0, 149, 255);
   rect((width/2-width/5), 200, width/5, height/6, 10);
@@ -391,64 +433,79 @@ void SiteAddingNewMember() {
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
   fill(xc, yc, zc);
   textSize(50);
+  textAlign(CENTER, CENTER);
   text("Provide the number of the new user", (width/2), (100));
   fill(xc, yc, zc);
   rect(width/8, 150, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  textSize(60);
+  text(firstText, width/8 + 20, 177, 3*width/4, 100);
+  
+  fill(xc, yc, zc);
+  textSize(50);
+  textAlign(CENTER, CENTER);
   text("Provide the name of the new user", (width/2), (500));
   fill(xc, yc, zc);
   rect(width/8, 550, 3*width/4, 100, 10);
+  fill(0);
+  textAlign(LEFT, TOP);
+  textSize(60);
+  text(secondText, width/8 + 20, 577, 3*width/4, 100);
+  
+  fill(xc, yc, zc);
+  textSize(50);
+  textAlign(CENTER, CENTER);  
   text("Provide the surname of the new user", (width/2), (900));
   fill(xc, yc, zc);
   rect(width/8, 950, 3*width/4, 100, 10);
-  // otwieranie klawiatury
-  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 150 && mouseY < 250 ){
-    // klawiatura???
-    touchStarted();   
-}
+  fill(0);
+  textAlign(LEFT, TOP);
+  textSize(60);
+  text(thirdText, width/8 + 20, 977, 3*width/4, 100);
 
-//  }
-//  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 550 && mouseY < 550){
-
-//  }
-//  if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 950 && mouseY < 1050 ){
-
-//  }
   // rysowanie strzałeczki with geometric shapes
   fill(xp, yp, zp);
   rect(30, 50, 50, 10, 0);
-  triangle(60, 100, 50, 50, 100, 0);
+  triangle(60, 0, 60, 50, 100, 0);
 }
 
-//void onNFCEvent(String txt) {
-//  tagText = trim(txt);
-//  tagStatus = "Tag:";
-//}
-
-//void onNFCWrite(boolean result, String message) {
-//  if (result)
-//    tagStatus = "Writing Complete.";
-//}
-
-void touchStarted(){
-  KetaiKeyboard.toggle(this);                             
-  tagText = "";
-  tagStatus = "Type tag text:";
-  textAlign(CENTER, BOTTOM);  
-}
 void keyPressed() {
   if (key != CODED)                                       
   {
-    tagStatus = "Write URL, then press ENTER to transmit";
-    tagText += key;                                       
+    //tagStatus = "Write URL, then press ENTER to transmit";
+    switch(tempText)
+    {
+    case 1:
+      firstText += key;
+      break;
+    case 2:
+      secondText += key;
+      break;    
+    case 3:
+      thirdText += key;
+      break;
+    default:
+      break;
+    }
+    
+    
   }
-  if (key == ENTER)                                       
+   if (keyCode == 67)                               // 10
   {
-    ketaiNFC.write(tagText);                              
-    tagStatus = "Touch tag to transmit:";
-    KetaiKeyboard.toggle(this);
-    textAlign(CENTER, CENTER);
-  } else if (keyCode == 67)                               // 10
-  {
-    tagText = tagText.substring(0, tagText.length()-1);   // 11
+    switch(tempText)
+    {
+    case 1:
+      firstText = firstText.substring(0, firstText.length()-1);      
+      break;
+    case 2:
+      secondText = secondText.substring(0, secondText.length()-1);
+      break;    
+    case 3:
+      thirdText = thirdText.substring(0, thirdText.length()-1);
+      break;
+    default:
+      break;
+    }
   }
 }
