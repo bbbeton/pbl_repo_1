@@ -6,17 +6,22 @@
 #include <SPI.h>
 #include <PN532_SPI.h>
 #include <PN532.h>
+// #include <LiquidCrystal_I2C.h>
 #include "baza.h"
 
-#define czujnikOtwarciaPIN D1
-#define elektromagnesPIN D2
-#define nfcPIN D8
+#define czujnikOtwarciaPIN 9
+#define elektromagnesPIN 10
+#define nfcPIN D4
+#define buzzerPIN D8
 #define KOD_OTWARCIA_DRZWI 22
 #define KOD_ZAMKNIECIA_DRZWI 13
 
 char ssid[] = "UPC8199300";
 char pass[] = "Wu8hmrQbwcbh";
 
+// LiquidCrystal_I2C lcd(0x27,20,4);
+
+WiFiServer server(80);
 WiFiUDP Udp;
 IPAddress remoteLocation;
 
@@ -26,27 +31,36 @@ const unsigned int remotePort = 9999;
 OSCErrorCode error;
 int temp = 0;
 
-PN532_SPI pn532spi(SPI, nfcPIN);
+PN532_SPI pn532spi(SPI,nfcPIN);
 PN532 nfc(pn532spi);
 
 byte UID[] = {0x00,0x00,0x00,0x00};
-byte UID1[] = {0x53,0xC4,0xB1,0x0B};
-byte UID2[] = {0x83,0xC9,0xB6,0x0D};
 
 char name[] = "abc";
 char surname[] = "def";
-char name1[] = "Bartosz";
-char surname1[] = "Kurkus";
-char name2[] = "Franek";
-char surname2[] = "Zarebski";
 
 KARTA *header = allocate(name,surname,UID);
-KARTA *KARTA1 = allocate(name1,surname1,UID1);
-KARTA *KARTA2 = allocate(name2,surname2,UID2);
 
 void setup()
 {
   Serial.begin(115200);
+
+  // lcd.init();
+  // lcd.backlight();
+  // lcd.print("Zamkniete");
+  
+  byte UID1[] = {0x53,0xC4,0xB1,0x0B};
+  byte UID2[] = {0x83,0xC9,0xB6,0x0D};
+
+  
+  char name1[] = "Bartosz";
+  char surname1[] = "Kurkus";
+  char name2[] = "Franek";
+  char surname2[] = "Zarebski";
+
+  
+  KARTA *KARTA1 = allocate(name1,surname1,UID1);
+  KARTA *KARTA2 = allocate(name2,surname2,UID2);
   
   add_to_list(header,KARTA1);
   add_to_list(header,KARTA2);
@@ -78,6 +92,12 @@ void setup()
   Serial.print("Local port: ");
   Serial.println(Udp.localPort());
 
+  
+  for(int i=0;i<4;i++)
+  {
+    Serial.println(KARTA1->UID[i]);
+  }
+
   // Inicjalizacja czytnika NFC
   nfc.begin();
 
@@ -91,17 +111,17 @@ void setup()
     while (1);
   }
 
-  // Wyswietlenie wersji ukladu PN5xx
+  // // Wyswietlenie wersji ukladu PN5xx
   Serial.print("Znaleziono uklad PN5");
   Serial.println((versiondata >> 24) & 0xFF, HEX);
 
-  // Wyswietlenie wersji firmware
+  // // Wyswietlenie wersji firmware
   Serial.print("Firmware: ");
   Serial.print((versiondata >> 16) & 0xFF, DEC);
   Serial.print('.');
   Serial.println((versiondata >> 8) & 0xFF, DEC);
 
-  // Konfiguracja modulu do odczytu znacznikow RFID
+  // // Konfiguracja modulu do odczytu znacznikow RFID
   nfc.SAMConfig();
 
   Serial.println("Oczekiwanie na znacznik...");
@@ -143,12 +163,16 @@ void openDoor()
   if (temp == KOD_OTWARCIA_DRZWI)
   {
     digitalWrite(elektromagnesPIN, LOW);
+    // lcd.clear();
+    // lcd.print("Zapraszamy");
     delay(3000);
     temp = 0;
   }
   if (digitalRead(czujnikOtwarciaPIN) == LOW)
   {
     digitalWrite(elektromagnesPIN, HIGH);
+    // lcd.clear();
+    // lcd.print("Zamkniete");
     if (WiFi.status() == WL_CONNECTED)
     {
       OSCMessage msg("/sensor");
@@ -175,18 +199,47 @@ void NFCread()
   // Proba odczytania znacznika
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
 
+  KARTA *KLIENT;
+
   // Jesli sukces odczytu
   if (success)
   {
-
-    if (find_by_UID(header,uid) != NULL) 
+    KLIENT = find_by_UID(header,uid);
+    if (KLIENT != NULL) 
     {
       //algorytm wejscia
-      temp = KOD_OTWARCIA_DRZWI;
-    } 
+      digitalWrite(elektromagnesPIN,LOW);
+      Serial.println("SUKCES");
+      // lcd.clear();
+      // lcd.print("Zapraszamy");
+      // lcd.setCursor(0,1);
+      // if(strlen(KLIENT->name) + strlen(KLIENT->surname) + 1 > 16)
+      // {
+      //   lcd.print(KLIENT->name);
+      // }
+      // else
+      // {
+      //   lcd.print(KLIENT->name);
+      //   lcd.setCursor(strlen(KLIENT->name) + 1, 1);
+      //   lcd.print(KLIENT->surname);
+      // }
+      delay(3000);
+      if (digitalRead(czujnikOtwarciaPIN) == LOW)
+      {
+        digitalWrite(elektromagnesPIN, HIGH);
+        // lcd.clear();
+        // lcd.print("Zamkniete");
+      }
+    }
     else 
     {
-      Serial.println("zły czip");
+    //   lcd.clear();
+    //   lcd.print("SPIERDALAJ");
+      digitalWrite(buzzerPIN,HIGH);
+      delay(5000);
+      // lcd.clear();
+      // lcd.print("Zamkniete");
+      digitalWrite(buzzerPIN,LOW);
     }
   }
 }

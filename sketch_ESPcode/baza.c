@@ -5,20 +5,17 @@ KARTA *allocate(char *name, char *surname, byte *UID)
     KARTA *result = (KARTA *)malloc(sizeof(KARTA));
     if(result == NULL)
     {
-        fprint("Error allocating memory for new card!\n");
         exit(1);
     }
     result->name = (char *)malloc((strlen(name) + 1) * sizeof(char));
     if(result->name == NULL)
     {
-        fprint("Error allocating memory for name!\n");
         free(result);
         exit(1);
     }
     result->surname = (char *)malloc((strlen(surname) + 1) * sizeof(char));
     if(result->surname == NULL)
     {
-        fprint("Error allocating memory for surname!\n");
         free(result);
         free(result->name);
         exit(1);
@@ -29,7 +26,6 @@ KARTA *allocate(char *name, char *surname, byte *UID)
     result->UID = (byte *)malloc(4 * sizeof(byte));
     if(result->UID == NULL)
     {
-        fprint("Error allocating memory for UID!\n");
         free(result);
         free(result->name);
         free(result->surname);
@@ -44,10 +40,10 @@ KARTA *allocate(char *name, char *surname, byte *UID)
 
 void add_to_list(KARTA *head, KARTA *NEW)
 {
-    if(NEW == NULL)
+    if(NEW == NULL) 
         return;
     KARTA *current = head;
-    while(current != NULL)
+    while(current->next != NULL)
     {
         current = current->next;
     }
