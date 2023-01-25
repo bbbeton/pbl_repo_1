@@ -71,24 +71,27 @@ import ketai.ui.*;                                        // 1
 
 KetaiNFC ketaiNFC;
 
+int tempText; 
 // ----------------------------------------------
 //  to co jest potrzebne do komunikacji:
 // ----------------------------------------------
 // logowanie
 String Password = "";
 String Username = "";
-// dodanie nowego czlonka
-String newUserNumber = "";
-String newUserName = "";
-String newUserSurname = "";
-int tempText; 
-int NewUserSubmitted = 0; // gdy dane gotowe do przeslania == 1
-// sygnal - chcemy dodac nowa karte
-int newCard;                  //przycisk został klikniety == 1, czyli uzytkownik chce dodac nowa karte
+int logIn = 0;            // submit klikniety == 1
 // signing up
 String NewUsername ="";
-String NewPasswordRepeat = "";
 String NewPassword = "";
+String NewHouseNumber = "";
+int singIn  = 0;         // submit klikniety == 1 - czyli dane gotowe 
+// dodanie nowego czlonka
+String newUserUsername = "";
+String newUserPassword = "";
+String newUserHouseNumber = "";
+int NewUserSubmitted = 0; // gdy dane gotowe do przeslania == 1
+// sygnal - chcemy dodac nowa karte
+int newCard;              //przycisk został klikniety == 1, czyli uzytkownik chce dodac nowa karte
+
 
 
 void setup() {
@@ -340,7 +343,7 @@ void mousePressed()
     break;
   case 5:
     break;
-  // site adding new member
+  // SITE adding new member
   case 6:{
   // powrót do poprzedniej strony
   if (mouseX > 0 && mouseX < 75 && mouseY > 0 && mouseY < 75) {
@@ -351,20 +354,20 @@ void mousePressed()
   if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
-    newUserNumber = "";
+    newUserUsername = "";
     tempText=1;
     
   }
   else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
     // klawiatura
     KetaiKeyboard.toggle(this);                             
-    newUserName = "";
+    newUserPassword = "";
     tempText=2;
   }
   else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 1200 && mouseY < 1300 ){
     // klawiatura
     KetaiKeyboard.toggle(this);
-    newUserSurname = "";
+    newUserHouseNumber = "";
     tempText=3;
   } else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
     NewUserSubmitted = 1;
@@ -390,12 +393,17 @@ void mousePressed()
       opcje = 70;
       SiteLoggingIn();
       // otwieranie klawiatury
+    }
     if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
       // klawiatura
       KetaiKeyboard.toggle(this);                             
       NewUsername = "";
       tempText=6;
-    
+    }
+    if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
+      // we go back to logging
+      opcje = 70;
+      singIn = 1;
     }
     else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 800 && mouseY < 900){
       // klawiatura
@@ -406,11 +414,10 @@ void mousePressed()
     else if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 1200 && mouseY < 1300 ){
       // klawiatura
       KetaiKeyboard.toggle(this);
-      NewPasswordRepeat = "";
+      NewHouseNumber = "";
       tempText=8;
     } else {
       KetaiKeyboard.hide(this);
-    }
     }
     break;
   // SITE LOGGING IN
@@ -432,6 +439,7 @@ void mousePressed()
   else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
     opcje = 3; // przejscie na strone główną
     OpenDoorSite();
+    logIn = 1;
   }
   // przejscie 
   else if(mouseX > (333) && mouseX < (758) && mouseY > (1950) && mouseY < (2050)){
@@ -611,30 +619,31 @@ void SiteAddingNewMember() {
   // tutaj zeby sie cofnac trzeba kliknac strzaleczke w lewym gornym rogu
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);
-  text("Provide the number of the new user", (width/2), (350));
+  text("Provide the username of the new user", (width/2), (350));
   fill(xc, yc, zc);
   rect(width/8, 400, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(newUserNumber, width/8 + 20, 177+250, 3*width/4, 100);
+  text(newUserUsername, width/8 + 20, 177+250, 3*width/4, 100);
   
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);
-  text("Provide the name of the new user", (width/2), (750));
+  text("Provide the password of the new user", (width/2), (750));
   fill(xc, yc, zc);
   rect(width/8, 800, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(newUserName, width/8 + 20, 577 + 250, 3*width/4, 100);
+  text(newUserPassword, width/8 + 20, 577 + 250, 3*width/4, 100);
   
   fill(xc, yc, zc);
-  textAlign(CENTER, CENTER);  
-  text("Provide the surname of the new user", (width/2), (1150));
+  textAlign(CENTER, CENTER); 
+  text("Provide the house number", (width/2), (1100));
+  text("of the new user", (width/2), (1150));
   fill(xc, yc, zc);
   rect(width/8, 1200, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(newUserSurname, width/8 + 20, 977 + 250, 3*width/4, 100);
+  text(newUserHouseNumber, width/8 + 20, 977 + 250, 3*width/4, 100);
   textSize(70);
   
   rectMode(CENTER);
@@ -718,7 +727,7 @@ void SiteLoggingIn(){
   text("Hello there", width/2, 200);
   fill(xc, yc, zc);
   textAlign(CENTER, CENTER);
-  text("Username / name", (width/2), (350));
+  text("Username", (width/2), (350));
   fill(xc, yc, zc);
   rect(width/8, 400, 3*width/4, 100, 10);
   fill(0);
@@ -743,9 +752,9 @@ void SiteLoggingIn(){
   textSize(90);
   text("Submit", width/2, 1700);
   
-  fill(0);
+  fill(255);
   text("Sign in", width/2, 2000);
-  fill(0);
+  fill(255);
   line(width/3, 2050, 2*width/3, 2050);
   
   
@@ -761,7 +770,7 @@ void SiteSigningUp(){
   text("Fill out the form below:", width/2, 175);
   fill(0);
   textAlign(CENTER, CENTER);
-  text("New: Username / name", (width/2), (350));
+  text("Username:", (width/2), (350));
   fill(xc, yc, zc);
   rect(width/8, 400, 3*width/4, 100, 10);
   fill(0);
@@ -779,12 +788,12 @@ void SiteSigningUp(){
 
   fill(0);
   textAlign(CENTER, CENTER);
-  text("Repeat the Password:", (width/2), (1050));
+  text("House Number:", (width/2), (1150));
   fill(xc, yc, zc);
   rect(width/8, 1200, 3*width/4, 100, 10);
   fill(0);
   textAlign(LEFT, TOP);
-  text(NewPasswordRepeat, width/8 + 20, 977 + 250, 3*width/4, 100);
+  text(NewHouseNumber, width/8 + 20, 977 + 250, 3*width/4, 100);
   
   rectMode(CENTER);
   fill(255);
@@ -821,13 +830,13 @@ void keyPressed() {
     switch(tempText)
     {
     case 1:
-      newUserNumber += key;
+      newUserUsername += key;
       break;
     case 2:
-      newUserName += key;
+      newUserPassword += key;
       break;    
     case 3:
-      newUserSurname += key;
+      newUserHouseNumber += key;
       break;
     case 4:
       Username += key;
@@ -842,7 +851,7 @@ void keyPressed() {
       NewPassword += key;
       break;
     case 8:
-      NewPasswordRepeat += key;
+      NewHouseNumber += key;
       break;
     default:
       break;
@@ -855,13 +864,13 @@ void keyPressed() {
     switch(tempText)
     {
     case 1:
-      newUserNumber = newUserNumber.substring(0, newUserNumber.length()-1);      
+      newUserUsername = newUserUsername.substring(0, newUserUsername.length()-1);      
       break;
     case 2:
-      newUserName = newUserName.substring(0, newUserName.length()-1);
+      newUserPassword = newUserPassword.substring(0, newUserPassword.length()-1);
       break;    
     case 3:
-      newUserSurname = newUserSurname.substring(0, newUserSurname.length()-1);
+      newUserHouseNumber = newUserHouseNumber.substring(0, newUserHouseNumber.length()-1);
       break;
     case 4:
       Username = Username.substring(0, Username.length()-1);
@@ -873,10 +882,10 @@ void keyPressed() {
       NewUsername = NewUsername.substring(0, NewUsername.length()-1);
       break;
     case 7:
-      NewPasswordRepeat = NewPasswordRepeat.substring(0, NewPasswordRepeat.length()-1);
+      NewPassword = NewPassword.substring(0, NewPassword.length()-1);
       break;
     case 8:
-      NewPassword = NewPassword.substring(0, NewPassword.length()-1);
+      NewHouseNumber = NewHouseNumber.substring(0, NewHouseNumber.length()-1);
       break;
     default:
       break;
