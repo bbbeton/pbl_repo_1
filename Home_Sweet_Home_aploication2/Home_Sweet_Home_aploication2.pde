@@ -68,10 +68,8 @@ NetAddress myRemoteLocation;
 //import android.os.Bundle;
 import ketai.net.nfc.*;
 import ketai.ui.*;                                        // 1
-
-KetaiNFC ketaiNFC;
-
 int tempText; 
+
 // ----------------------------------------------
 //  to co jest potrzebne do komunikacji:
 // ----------------------------------------------
@@ -132,11 +130,7 @@ void setup() {
   int x = 60;
   for (int i = 0; i < message.length(); i++) {
    letters[i] = new Letter(x,1100,message.charAt(i));
-   x += textWidth(message.charAt(i));
-   
-   if (ketaiNFC == null)
-    ketaiNFC = new KetaiNFC(this);
-  
+   x += textWidth(message.charAt(i));  
   }
 }
 void draw() {
