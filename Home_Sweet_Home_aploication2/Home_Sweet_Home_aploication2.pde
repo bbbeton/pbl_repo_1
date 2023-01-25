@@ -371,6 +371,7 @@ void mousePressed()
     tempText=3;
   } else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
     NewUserSubmitted = 1;
+    opcje = 3;
   }
   else {
     KetaiKeyboard.hide(this);
