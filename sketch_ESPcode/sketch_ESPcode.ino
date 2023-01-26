@@ -9,10 +9,10 @@
 // #include <LiquidCrystal_I2C.h>
 #include "baza.h"
 
-#define czujnikOtwarciaPIN 9
-#define elektromagnesPIN 10
-#define nfcPIN D4
-#define buzzerPIN D8
+#define czujnikOtwarciaPIN 0
+#define elektromagnesPIN 4
+#define nfcPIN 2
+#define buzzerPIN 15
 #define KOD_OTWARCIA_DRZWI 22
 #define KOD_ZAMKNIECIA_DRZWI 13
 
@@ -21,7 +21,7 @@ char pass[] = "Wu8hmrQbwcbh";
 
 // LiquidCrystal_I2C lcd(0x27,20,4);
 
-WiFiServer server(80);
+//WiFiServer server(80);
 WiFiUDP Udp;
 IPAddress remoteLocation;
 
@@ -36,8 +36,8 @@ PN532 nfc(pn532spi);
 
 byte UID[] = {0x00,0x00,0x00,0x00};
 
-char name[] = "abc";
-char surname[] = "def";
+char name[] = "a";
+char surname[] = "b";
 
 KARTA *header = allocate(name,surname,UID);
 
@@ -50,20 +50,15 @@ void setup()
   // lcd.print("Zamkniete");
   
   byte UID1[] = {0x53,0xC4,0xB1,0x0B};
-  byte UID2[] = {0x83,0xC9,0xB6,0x0D};
 
   
-  char name1[] = "Bartosz";
-  char surname1[] = "Kurkus";
-  char name2[] = "Franek";
-  char surname2[] = "Zarebski";
+  char name1[] = "Igor";
+  char surname1[] = "Uchnast";
 
   
   KARTA *KARTA1 = allocate(name1,surname1,UID1);
-  KARTA *KARTA2 = allocate(name2,surname2,UID2);
   
   add_to_list(header,KARTA1);
-  add_to_list(header,KARTA2);
 
   pinMode(czujnikOtwarciaPIN, INPUT_PULLUP);
   pinMode(elektromagnesPIN, OUTPUT);
@@ -92,12 +87,6 @@ void setup()
   Serial.print("Local port: ");
   Serial.println(Udp.localPort());
 
-  
-  for(int i=0;i<4;i++)
-  {
-    Serial.println(KARTA1->UID[i]);
-  }
-
   // Inicjalizacja czytnika NFC
   nfc.begin();
 
@@ -111,17 +100,17 @@ void setup()
     while (1);
   }
 
-  // // Wyswietlenie wersji ukladu PN5xx
+  // Wyswietlenie wersji ukladu PN5xx
   Serial.print("Znaleziono uklad PN5");
   Serial.println((versiondata >> 24) & 0xFF, HEX);
 
-  // // Wyswietlenie wersji firmware
+  // Wyswietlenie wersji firmware
   Serial.print("Firmware: ");
   Serial.print((versiondata >> 16) & 0xFF, DEC);
   Serial.print('.');
   Serial.println((versiondata >> 8) & 0xFF, DEC);
 
-  // // Konfiguracja modulu do odczytu znacznikow RFID
+  // Konfiguracja modulu do odczytu znacznikow RFID
   nfc.SAMConfig();
 
   Serial.println("Oczekiwanie na znacznik...");
@@ -163,10 +152,15 @@ void openDoor()
   if (temp == KOD_OTWARCIA_DRZWI)
   {
     digitalWrite(elektromagnesPIN, LOW);
+    Serial.println("Zapraszamy");
     // lcd.clear();
     // lcd.print("Zapraszamy");
     delay(3000);
     temp = 0;
+  }
+  if (digitalRead(czujnikOtwarciaPIN) == HIGH)
+  {
+    digitalWrite(elektromagnesPIN,LOW);
   }
   if (digitalRead(czujnikOtwarciaPIN) == LOW)
   {
@@ -204,12 +198,19 @@ void NFCread()
   // Jesli sukces odczytu
   if (success)
   {
+    Serial.println(uid[0]);
+    Serial.println(uid[1]);
+    Serial.println(uid[2]);
+    Serial.println(uid[3]);
     KLIENT = find_by_UID(header,uid);
     if (KLIENT != NULL) 
     {
       //algorytm wejscia
       digitalWrite(elektromagnesPIN,LOW);
       Serial.println("SUKCES");
+      Serial.println("Zapraszamy");
+      Serial.println(KLIENT->name);
+      Serial.println(KLIENT->surname);
       // lcd.clear();
       // lcd.print("Zapraszamy");
       // lcd.setCursor(0,1);
@@ -224,19 +225,26 @@ void NFCread()
       //   lcd.print(KLIENT->surname);
       // }
       delay(3000);
+      if (digitalRead(czujnikOtwarciaPIN) == HIGH)
+      {
+        digitalWrite(elektromagnesPIN,HIGH);
+      }
       if (digitalRead(czujnikOtwarciaPIN) == LOW)
       {
         digitalWrite(elektromagnesPIN, HIGH);
+        Serial.println("Zamkniete");
         // lcd.clear();
         // lcd.print("Zamkniete");
       }
     }
     else 
     {
-    //   lcd.clear();
-    //   lcd.print("SPIERDALAJ");
+      // lcd.clear();
+      // lcd.print("SPIERDALAJ");
+      Serial.println("SPIERDALAJ");
       digitalWrite(buzzerPIN,HIGH);
       delay(5000);
+      Serial.println("Zamkniete");
       // lcd.clear();
       // lcd.print("Zamkniete");
       digitalWrite(buzzerPIN,LOW);
