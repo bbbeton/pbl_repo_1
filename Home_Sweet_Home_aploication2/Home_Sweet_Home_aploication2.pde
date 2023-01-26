@@ -53,7 +53,7 @@ int opcje = 70;
 int wifi;
 
 //wifi
-String remoteIP = "192.168.0.227";      //local IP plytki ESP
+String remoteIP = "192.168.8.129";      //local IP plytki ESP
 int remotePort = 8888;                  //port do wysylania
 int localPort = 9999;                   //lokalny port
 int otwarcie_drzwi = 0;
@@ -314,7 +314,7 @@ void mousePressed()
   //  kamerka
   case 2:
     if (mouseX > width/2-400 && mouseX < width/2+400 && mouseY > height/2-350 && mouseY < height/2+350 ) {
-      link("http://192.168.31.190/mjpeg/1");
+      link("http://192.168.8.132/mjpeg/1");
     }
     break;
   // strona glowna
