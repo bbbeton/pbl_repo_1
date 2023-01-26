@@ -90,6 +90,11 @@ int NewUserSubmitted = 0; // gdy dane gotowe do przeslania == 1
 // sygnal - chcemy dodac nowa karte
 int newCard;              //przycisk został klikniety == 1, czyli uzytkownik chce dodac nowa karte
 
+  String[] savedPassword=new String[3];
+String[] savedUserName=new String[3];
+int zlylogin=0;
+
+
 
 
 void setup() {
@@ -120,7 +125,13 @@ void setup() {
   ikona_drzwi = loadImage("ikona_drzwi.png");
   ikona_kamera = loadImage("ikona_kamera.png");
   myFont = loadFont("Bauhaus93-120.vlw"); //czcionka
-  
+ 
+ savedUserName[0]="franek";
+savedUserName[1]="weronika";
+savedUserName[2]="bartek";
+savedPassword[0]="4444";
+savedPassword[1]="123";
+savedPassword[2]="321";
   //myFont = createFont("Bauhaus93-120", 32);
   
   textFont(myFont);
@@ -388,7 +399,7 @@ void mousePressed()
       opcje = 70;
       SiteLoggingIn();
       // otwieranie klawiatury
-    }
+    } 
     if (mouseX > (width/8) && mouseX < (7*width/8) && mouseY > 400 && mouseY < 500 ){
       // klawiatura
       KetaiKeyboard.toggle(this);                             
@@ -432,9 +443,18 @@ void mousePressed()
   // ------------------------ SUBMIT ---------------------------
   // zabezpieczyc kiedy dziala - login haslo sie zgadzaja+ przycisk klikniety -> przejscie na glowna strone
   else if (mouseX > (width/2 - 175) && mouseX < (width/2 + 175) && mouseY > (1525) && mouseY < (1875)){
-    opcje = 3; // przejscie na strone główną
+    for(int i=0;i<3;i++)
+    {
+      if(Username.equals(savedUserName[i]) == true && Password.equals(savedPassword[i]) == true)
+      {
+         opcje = 3; // przejscie na strone główną
     OpenDoorSite();
     logIn = 1;
+      }
+    }
+    
+    
+ 
   }
   // przejscie 
   else if(mouseX > (333) && mouseX < (758) && mouseY > (1950) && mouseY < (2050)){
@@ -463,11 +483,20 @@ void SiteHistoriaWejsc(){
   dolnyPasek();
   image(historia_po_photo, 0, 2050, width/5, width/5);
   fill(xc, yc, zc);
-  rect(width/7, width/7, 5*width/7, 5*height/7, 15);
+  textSize(70);
+   textAlign(LEFT, TOP);
+  text("26.01/12:45/Weronika",30,100,800,200);
+  text("26.01/10:18/Weronika's phone",30,300,1100,200);
+  text("26.01/3:15/Igor",30,500,800,200);
+  text("25.01/20:12/Bartek",30,700,800,200);
+  text("25.01/17:10/Janek",30,900,800,200);
+  text("25.01/09:57/Bartek",30,1100,800,200);
+  text("24.01/18:48/Franek",30,1300,800,200);
+  text("24.01/11:20/Weronika",30,1500,800,200);
+  text("23.01/23:13/Igor's phone",30,1700,1100,200);
   // wstawiamy liste kto wchodzil 
 
   
-  textSize(70);
   strokeWeight(5);
   stroke(255);
 }
@@ -751,6 +780,7 @@ void SiteLoggingIn(){
   text("Sign in", width/2, 2000);
   fill(255);
   line(width/3, 2050, 2*width/3, 2050);
+  
   
   
 }
