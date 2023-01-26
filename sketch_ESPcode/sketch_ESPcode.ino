@@ -10,7 +10,7 @@
 #include "baza.h"
 
 #define czujnikOtwarciaPIN 0
-#define elektromagnesPIN 4
+#define elektromagnesPIN 10
 #define nfcPIN 2
 #define buzzerPIN 15
 #define KOD_OTWARCIA_DRZWI 22
