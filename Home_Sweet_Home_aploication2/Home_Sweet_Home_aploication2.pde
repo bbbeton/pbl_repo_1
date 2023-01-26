@@ -145,9 +145,9 @@ savedPassword[2]="321";
   }
 }
 void draw() {
-  /*
- ZAKOMENTOWANE DO CZASU PRACY NAD RESZTĄ KODU
- -------------------------------------
+  
+ //ZAKOMENTOWANE DO CZASU PRACY NAD RESZTĄ KODU
+ //-------------------------------------
  if(millis()<6000)
  {
     time=5000/30;
@@ -186,7 +186,7 @@ c=1.666666666;
   }
   else
   {
-    */
+    
   // różne strony
   switch(opcje){
   case 1: 
@@ -235,7 +235,7 @@ c=1.666666666;
   }
 
   } 
-//} DO ODKOMENTOWANIA GDY BEDZIEMY WLACZAC OTWIERANIE APKI
+} //DO ODKOMENTOWANIA GDY BEDZIEMY WLACZAC OTWIERANIE APKI
 class Letter {
   char letter;
   // The object knows its original "home" location
