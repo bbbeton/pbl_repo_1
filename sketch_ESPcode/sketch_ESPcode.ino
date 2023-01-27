@@ -6,7 +6,8 @@
 #include <SPI.h>
 #include <PN532_SPI.h>
 #include <PN532.h>
-// #include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
 #include "baza.h"
 
 #define czujnikOtwarciaPIN 0
@@ -19,9 +20,8 @@
 char ssid[] = "UPC8199300";
 char pass[] = "Wu8hmrQbwcbh";
 
-// LiquidCrystal_I2C lcd(0x27,20,4);
+LiquidCrystal_I2C lcd(0x27,16,2);
 
-//WiFiServer server(80);
 WiFiUDP Udp;
 IPAddress remoteLocation;
 
@@ -35,30 +35,25 @@ PN532_SPI pn532spi(SPI,nfcPIN);
 PN532 nfc(pn532spi);
 
 byte UID[] = {0x00,0x00,0x00,0x00};
+byte UID1[] = {0x53,0xC4,0xB1,0x0B};
 
 char name[] = "a";
 char surname[] = "b";
+char name1[] = "Igor";
+char surname1[] = "Uchnast";
 
 KARTA *header = allocate(name,surname,UID);
+KARTA *KARTA1 = allocate(name1,surname1,UID1);
 
 void setup()
 {
   Serial.begin(115200);
-
-  // lcd.init();
-  // lcd.backlight();
-  // lcd.print("Zamkniete");
-  
-  byte UID1[] = {0x53,0xC4,0xB1,0x0B};
-
-  
-  char name1[] = "Igor";
-  char surname1[] = "Uchnast";
-
-  
-  KARTA *KARTA1 = allocate(name1,surname1,UID1);
   
   add_to_list(header,KARTA1);
+
+  lcd.init();
+  lcd.backlight();
+  lcd.print("Zamkniete");
 
   pinMode(czujnikOtwarciaPIN, INPUT_PULLUP);
   pinMode(elektromagnesPIN, OUTPUT);
@@ -153,8 +148,8 @@ void openDoor()
   {
     digitalWrite(elektromagnesPIN, LOW);
     Serial.println("Zapraszamy");
-    // lcd.clear();
-    // lcd.print("Zapraszamy");
+    lcd.clear();
+    lcd.print("Zapraszamy");
     delay(3000);
     temp = 0;
   }
@@ -165,8 +160,8 @@ void openDoor()
   if (digitalRead(czujnikOtwarciaPIN) == LOW)
   {
     digitalWrite(elektromagnesPIN, HIGH);
-    // lcd.clear();
-    // lcd.print("Zamkniete");
+    lcd.clear();
+    lcd.print("Zamkniete");
     if (WiFi.status() == WL_CONNECTED)
     {
       OSCMessage msg("/sensor");
@@ -211,19 +206,19 @@ void NFCread()
       Serial.println("Zapraszamy");
       Serial.println(KLIENT->name);
       Serial.println(KLIENT->surname);
-      // lcd.clear();
-      // lcd.print("Zapraszamy");
-      // lcd.setCursor(0,1);
-      // if(strlen(KLIENT->name) + strlen(KLIENT->surname) + 1 > 16)
-      // {
-      //   lcd.print(KLIENT->name);
-      // }
-      // else
-      // {
-      //   lcd.print(KLIENT->name);
-      //   lcd.setCursor(strlen(KLIENT->name) + 1, 1);
-      //   lcd.print(KLIENT->surname);
-      // }
+      lcd.clear();
+      lcd.print("Zapraszamy");
+      lcd.setCursor(0,1);
+      if(strlen(KLIENT->name) + strlen(KLIENT->surname) + 1 > 16)
+      {
+        lcd.print(KLIENT->name);
+      }
+      else
+      {
+        lcd.print(KLIENT->name);
+        lcd.setCursor(strlen(KLIENT->name) + 1, 1);
+        lcd.print(KLIENT->surname);
+      }
       delay(3000);
       if (digitalRead(czujnikOtwarciaPIN) == HIGH)
       {
@@ -233,20 +228,20 @@ void NFCread()
       {
         digitalWrite(elektromagnesPIN, HIGH);
         Serial.println("Zamkniete");
-        // lcd.clear();
-        // lcd.print("Zamkniete");
+        lcd.clear();
+        lcd.print("Zamkniete");
       }
     }
     else 
     {
-      // lcd.clear();
-      // lcd.print("SPIERDALAJ");
+      lcd.clear();
+      lcd.print("SPIERDALAJ");
       Serial.println("SPIERDALAJ");
       digitalWrite(buzzerPIN,HIGH);
       delay(5000);
       Serial.println("Zamkniete");
-      // lcd.clear();
-      // lcd.print("Zamkniete");
+      lcd.clear();
+      lcd.print("Zamkniete");
       digitalWrite(buzzerPIN,LOW);
     }
   }
