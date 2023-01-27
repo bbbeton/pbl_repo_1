@@ -17,8 +17,8 @@
 #define KOD_OTWARCIA_DRZWI 22
 #define KOD_ZAMKNIECIA_DRZWI 13
 
-char ssid[] = "UPC8199300";
-char pass[] = "Wu8hmrQbwcbh";
+char ssid[] = "PBL_WiFi";
+char pass[] = "IIRPW2020";
 
 LiquidCrystal_I2C lcd(0x27,16,2);
 
@@ -57,10 +57,10 @@ void setup()
 
   pinMode(czujnikOtwarciaPIN, INPUT_PULLUP);
   pinMode(elektromagnesPIN, OUTPUT);
+  pinMode(buzzerPIN,OUTPUT);
 
   digitalWrite(czujnikOtwarciaPIN, LOW);
   digitalWrite(elektromagnesPIN, HIGH);
-
 
   Serial.println();
   Serial.println();
@@ -147,7 +147,6 @@ void openDoor()
   if (temp == KOD_OTWARCIA_DRZWI)
   {
     digitalWrite(elektromagnesPIN, LOW);
-    Serial.println("Zapraszamy");
     lcd.clear();
     lcd.print("Zapraszamy");
     delay(3000);
@@ -193,19 +192,11 @@ void NFCread()
   // Jesli sukces odczytu
   if (success)
   {
-    Serial.println(uid[0]);
-    Serial.println(uid[1]);
-    Serial.println(uid[2]);
-    Serial.println(uid[3]);
     KLIENT = find_by_UID(header,uid);
     if (KLIENT != NULL) 
     {
       //algorytm wejscia
       digitalWrite(elektromagnesPIN,LOW);
-      Serial.println("SUKCES");
-      Serial.println("Zapraszamy");
-      Serial.println(KLIENT->name);
-      Serial.println(KLIENT->surname);
       lcd.clear();
       lcd.print("Zapraszamy");
       lcd.setCursor(0,1);
@@ -227,7 +218,6 @@ void NFCread()
       if (digitalRead(czujnikOtwarciaPIN) == LOW)
       {
         digitalWrite(elektromagnesPIN, HIGH);
-        Serial.println("Zamkniete");
         lcd.clear();
         lcd.print("Zamkniete");
       }
@@ -235,11 +225,9 @@ void NFCread()
     else 
     {
       lcd.clear();
-      lcd.print("SPIERDALAJ");
-      Serial.println("SPIERDALAJ");
+      lcd.print("Odmowa dostepu!");
       digitalWrite(buzzerPIN,HIGH);
       delay(5000);
-      Serial.println("Zamkniete");
       lcd.clear();
       lcd.print("Zamkniete");
       digitalWrite(buzzerPIN,LOW);

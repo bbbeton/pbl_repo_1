@@ -68,7 +68,10 @@ KARTA *find_by_UID(KARTA *head, byte *UID)
             return current;
         }
         else
+        {        
             count = 0;
+            current = current->next;
+        }
     }
     return NULL;
 }
